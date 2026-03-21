@@ -37,3 +37,6 @@ textures/vram_compression/import_etc2_astc=true
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/mobile_wallet_adapter/plugin.cfg")
+[autoload]
+
+DesignTokens="*res://autoloads/DesignTokens.gd"
