@@ -40,3 +40,4 @@ enabled=PackedStringArray("res://addons/mobile_wallet_adapter/plugin.cfg")
 [autoload]
 
 DesignTokens="*res://autoloads/DesignTokens.gd"
+SceneManager="*res://autoloads/SceneManager.gd"
