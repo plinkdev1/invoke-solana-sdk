@@ -1,4 +1,4 @@
-# AuthCache.gd
+﻿# AuthCache.gd
 extends Control
 
 @onready var status_dot:    ColorRect      = $Scroll/VBox/StatusRow/StatusDot
@@ -22,7 +22,7 @@ func _ready() -> void:
 
 func _refresh_status() -> void:
 	var has_token := false
-	var address   := "—"
+	var address   := "â€”"
 	var age_sec   := 0
 	var is_stale  := false
 	if _mwa:
@@ -45,7 +45,7 @@ func _refresh_status() -> void:
 					if age_sec > 0:
 						age_label.text = "%d min %d sec" % [age_sec / 60, age_sec % 60]
 					else:
-							age_label.text = "—"
+							age_label.text = "â€”"
 							stale_label.text = "Yes" if is_stale else "No"
 							stale_label.modulate = DesignTokens.COLOR_YELLOW if is_stale else DesignTokens.COLOR_GREEN
 							_add_log("Status refreshed -- token: %s" % str(has_token))

@@ -1,4 +1,4 @@
-# Splash.gd
+﻿# Splash.gd
 extends Control
 
 const AUTO_ADVANCE_DELAY := 2.5

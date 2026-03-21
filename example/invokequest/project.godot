@@ -16,6 +16,7 @@ config/version="1.0.0"
 config/tags=PackedStringArray("android", "solana", "mwa", "invoke")
 run/main_scene="res://scenes/screens/Splash.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
+`nconfig/icon="res://icon.png"
 
 [autoload]
 
@@ -27,7 +28,7 @@ SceneManager="*res://autoloads/SceneManager.gd"
 window/size/viewport_width=1080
 window/size/viewport_height=1920
 window/size/resizable=false
-window/stretch/mode="canvas_items"
+window/stretch/mode="viewport"
 window/handheld/orientation=1
 
 [editor_plugins]

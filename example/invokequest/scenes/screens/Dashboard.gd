@@ -1,4 +1,4 @@
-# Dashboard.gd
+﻿# Dashboard.gd
 extends Control
 
 @onready var address_label:  Label     = $Scroll/VBox/BalanceCard/CardVBox/AddressLabel

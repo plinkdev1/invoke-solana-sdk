@@ -67,3 +67,13 @@ desktop.ini
 *~
 .vscode/settings.json
 .vscode/launch.json
+# Android Gradle build outputs
+example/invokequest/android/build/build/
+example/invokequest/android/build/.gradle/
+example/invokequest/android/build/libs/release/
+example/invokequest/android/build/libs/debug/
+example/invokequest/android/build/java_pid*.hprof
+example/invokequest/debug.keystore
+example/invokequest/invokequest.keystore
+*.apk
+*.idsig

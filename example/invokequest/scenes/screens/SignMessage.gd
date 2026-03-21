@@ -1,4 +1,4 @@
-# SignMessage.gd
+﻿# SignMessage.gd
 extends Control
 
 @onready var message_input: TextEdit       = $Scroll/VBox/InputCard/CardVBox/MessageInput

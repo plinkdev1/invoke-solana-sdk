@@ -1,4 +1,4 @@
-# WalletPicker.gd
+﻿# WalletPicker.gd
 extends Control
 
 const WALLETS := [
