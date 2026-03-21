@@ -1,0 +1,142 @@
+﻿[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scenes/screens/WalletPicker.gd" id="1"]
+[ext_resource type="Shader" path="res://shaders/aurora_background.gdshader" id="2"]
+[ext_resource type="Shader" path="res://shaders/glass_card.gdshader" id="3"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_aurora"]
+shader = ExtResource("2")
+shader_parameter/time_scale = 0.0
+shader_parameter/color_a = Color(0.6, 0.271, 1, 0.08)
+shader_parameter/color_b = Color(0.078, 0.945, 0.596, 0.04)
+shader_parameter/bg_color = Color(0.031, 0.039, 0.055, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_glass"]
+shader = ExtResource("3")
+shader_parameter/blur_strength = 3.0
+shader_parameter/tint_color = Color(1, 1, 1, 0.06)
+shader_parameter/border_alpha = 0.10
+shader_parameter/border_width = 0.008
+shader_parameter/border_color = Color(1, 1, 1, 1)
+
+[node name="WalletPicker" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="BgColor" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.031, 0.039, 0.055, 1)
+
+[node name="Aurora" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+material = SubResource("ShaderMaterial_aurora")
+color = Color(1, 1, 1, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 24
+offset_left = 40.0
+offset_right = -40.0
+offset_top = 80.0
+
+[node name="TitleLabel" type="Label" parent="Scroll/VBox"]
+layout_mode = 2
+text = "Connect Your Wallet"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 28
+
+[node name="SubLabel" type="Label" parent="Scroll/VBox"]
+layout_mode = 2
+text = "Choose a wallet to get started"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 1, 0.6)
+theme_override_font_sizes/font_size = 14
+
+[node name="Spacer" type="Control" parent="Scroll/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 16)
+
+[node name="CardPhantom" type="PanelContainer" parent="Scroll/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 100)
+material = SubResource("ShaderMaterial_glass")
+
+[node name="BtnPhantom" type="Button" parent="Scroll/VBox/CardPhantom"]
+layout_mode = 2
+flat = true
+text = "Phantom   |   Most Popular"
+theme_override_font_sizes/font_size = 18
+[connection signal="pressed" from="Scroll/VBox/CardPhantom/BtnPhantom" to="." method="_on_card_pressed" binds=[0]]
+
+[node name="CardBackpack" type="PanelContainer" parent="Scroll/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 100)
+material = SubResource("ShaderMaterial_glass")
+
+[node name="BtnBackpack" type="Button" parent="Scroll/VBox/CardBackpack"]
+layout_mode = 2
+flat = true
+text = "Backpack   |   xNFT Wallet"
+theme_override_font_sizes/font_size = 18
+[connection signal="pressed" from="Scroll/VBox/CardBackpack/BtnBackpack" to="." method="_on_card_pressed" binds=[1]]
+
+[node name="CardSolflare" type="PanelContainer" parent="Scroll/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 100)
+material = SubResource("ShaderMaterial_glass")
+
+[node name="BtnSolflare" type="Button" parent="Scroll/VBox/CardSolflare"]
+layout_mode = 2
+flat = true
+text = "Solflare   |   DeFi Focused"
+theme_override_font_sizes/font_size = 18
+[connection signal="pressed" from="Scroll/VBox/CardSolflare/BtnSolflare" to="." method="_on_card_pressed" binds=[2]]
+
+[node name="LoadingOverlay" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+visible = false
+
+[node name="OverlayBg" type="ColorRect" parent="LoadingOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.031, 0.039, 0.055, 0.85)
+
+[node name="StatusLabel" type="Label" parent="LoadingOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Waiting for wallet..."
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 1, 0.9)
+theme_override_font_sizes/font_size = 16
