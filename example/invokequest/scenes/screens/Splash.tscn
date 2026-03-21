@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://ojvx2gyyky32"]
+[gd_scene load_steps=6 format=3 uid="uid://bv6tkl1cv2esg"]
 
 [ext_resource type="Script" path="res://scenes/screens/Splash.gd" id="1"]
 [ext_resource type="Shader" path="res://shaders/aurora_background.gdshader" id="2"]
@@ -10,6 +10,19 @@ shader_parameter/time_scale = 0.3
 shader_parameter/color_a = Color(0.6, 0.271, 1, 0.15)
 shader_parameter/color_b = Color(0.078, 0.945, 0.596, 0.08)
 shader_parameter/bg_color = Color(0.031, 0.039, 0.055, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
+bg_color = Color(0.06, 0.06, 0.1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.12)
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
+corner_detail = 12
 
 [node name="Splash" type="Control"]
 layout_mode = 3
@@ -51,11 +64,18 @@ custom_minimum_size = Vector2(800, 0)
 layout_mode = 2
 theme_override_constants/separation = 32
 
-[node name="SplashIcon" type="TextureRect" parent="Center/VBox"]
+[node name="IconContainer" type="PanelContainer" parent="Center/VBox"]
 modulate = Color(1, 1, 1, 0)
+clip_contents = true
 custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="SplashIcon" type="TextureRect" parent="Center/VBox/IconContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 texture = ExtResource("3")
 expand_mode = 1
 stretch_mode = 5

@@ -1,9 +1,9 @@
 # AuthResult.gd
 extends Control
 
-@onready var wallet_label:  Label          = $Center/VBox/WalletLabel
-@onready var address_label: Label          = $Center/VBox/AddressLabel
-@onready var cache_label:   Label          = $Center/VBox/CacheLabel
+@onready var wallet_label:  Label          = $Center/VBox/Card/CardVBox/WalletLabel
+@onready var address_label: Label          = $Center/VBox/Card/CardVBox/AddressLabel
+@onready var cache_label:   Label          = $Center/VBox/Card/CardVBox/CacheLabel
 @onready var continue_btn:  Button         = $Center/VBox/ContinueBtn
 @onready var card:          PanelContainer = $Center/VBox/Card
 
@@ -14,15 +14,15 @@ func _ready() -> void:
 		var plugin = Engine.get_singleton("InvokeMWA")
 		address    = plugin.cacheGetAddress()
 		from_cache = plugin.cacheHasToken()
-		var display_address := address
-		if address.length() > 12:
-			display_address = address.substr(0, 4) + "..." + address.substr(address.length() - 4)
-			wallet_label.text  = "Connected"
-			address_label.text = display_address if display_address != "" else "No address"
-			cache_label.text   = "Session cached" if from_cache else "New session"
-			cache_label.modulate = DesignTokens.COLOR_GREEN if from_cache else DesignTokens.COLOR_YELLOW
-			await get_tree().process_frame
-			_play_enter()
+	var display_address := address
+	if address.length() > 12:
+		display_address = address.substr(0, 4) + "..." + address.substr(address.length() - 4)
+	wallet_label.text  = "Connected"
+	address_label.text = display_address if display_address != "" else "No address"
+	cache_label.text   = "Session cached" if from_cache else "New session"
+	cache_label.modulate = DesignTokens.COLOR_GREEN if from_cache else DesignTokens.COLOR_YELLOW
+	await get_tree().process_frame
+	_play_enter()
 
 func _play_enter() -> void:
 	card.modulate.a = 0.0
