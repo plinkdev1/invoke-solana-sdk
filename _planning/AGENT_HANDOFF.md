@@ -1,151 +1,221 @@
-﻿# INVOKE SDK — AGENT HANDOFF DOCUMENT
-## Session Handoff · March 2026 · Francisco (Franny) · Portugal
+﻿# INVOKE SDK — COMPLETE AGENT HANDOFF
+## Updated Session Startup Document
+## Francisco (Franny) · Portugal · March 2026
 
 ---
 
-## PROJECT IDENTITY
-- Project name: INVOKE (formerly GodotMWA / SolanaQuest — deprecated)
-- SDK name: Invoke
-- Example app: InvokeQuest
-- Repo: https://github.com/plinkdev1/invoke-solana-sdk (PRIVATE until grant delivery)
-- Local path: C:\PROJECTS\Invoke_Solana_App
-- Branch strategy: all work on develop, merge to main after each phase
-- Terminal: PowerShell on Windows
+## CRITICAL: READ THIS FIRST
 
----
-
-## GRANT CONTEXT
-Solana Foundation grant — ,000 USD. Three non-negotiable deliverables:
-1. Invoke SDK — GDScript + Kotlin plugin, full MWA API parity, extensible auth token cache
-2. Documentation — Docusaurus site deployed to Netlify
+This is a Solana Foundation grant project ($10,000 USD).
+Three non-negotiable deliverables — ALL NOW COMPLETE:
+1. Invoke SDK — GDScript + Kotlin plugin, full MWA API parity, auth token cache
+2. Documentation — Docusaurus site on Netlify
 3. InvokeQuest — Example Godot Android app showcasing every SDK method
 
 ---
 
-## CURRENT STATE — PHASE 1 COMPLETE
+## HOW THIS DEVELOPER WORKS — RESPECT THIS ALWAYS
 
-### What is done (committed + merged to main):
-- Phase 0: Repo scaffold, .gitignore, README, LICENSE (Apache 2.0), CONTRIBUTING.md
-- Phase 0: GitHub Actions CI skeleton (.github/workflows/build.yml)
-- Phase 0: API Parity Matrix (docs/API_PARITY_MATRIX.md)
-- Phase 0: Auth Cache Research (docs/AUTH_CACHE_RESEARCH.md)
-- Phase 1 Epic 1.1 — GDScript SDK layer (addons/mobile_wallet_adapter/):
-  - MWAError.gd, MWAIdentity.gd, MWAAccount.gd, MWAAuthToken.gd
-  - MWASendOptions.gd, MWACapabilities.gd
-  - MobileWalletAdapter.gd (main SDK class)
-  - plugin.cfg
-- Phase 1 Epic 1.2 — Kotlin Android Plugin (android/plugin/):
-  - MWAError.kt, AuthCacheImpl.kt, MWABridge.kt, MWAPlugin.kt
-  - Gradle build system (settings.gradle.kts, build.gradle.kts, gradle.properties)
-  - AndroidManifest.xml with wallet detection queries
-  - gradlew.bat + gradle wrapper
-  - BUILD SUCCESSFUL — plugin-release.aar (64KB) generated
-- Phase 1 Epic 1.3 — Auth Cache GDScript layer:
-  - MWAAuthCache.gd (base interface)
-  - MWAMemoryCache.gd (in-memory)
-  - MWAFileCache.gd (file-based, default)
-  - MWASecureCache.gd (Android Keystore, delegates to Kotlin)
-  - MWACacheManager.gd (auto-select backend)
-
-### Git log (last 5 on main):
-- beb71c7 Merge pull request #5 — Phase 1 complete
-- 4fb1c12 Merge pull request #4 — Epic 1.2 Kotlin plugin + AAR
-- a557468 Merge pull request #3 — Epic 1.1 GDScript layer
-- 1bb43b1 Merge pull request #1 — Phase 0 Foundation
+- ONE task at a time. Maximum two complementary subtasks per prompt.
+- Developer copy-pastes output into terminal and verifies before continuing.
+- Commit + push after EVERY completed task. No exceptions.
+- If something fails, paste the exact error. Fix before moving on. Never skip ahead.
+- Always give PowerShell commands. Developer is on Windows.
+- Always confirm current directory before running commands.
+- Developer has TWO projects in C:\PROJECTS\ — do NOT confuse them:
+  - C:\PROJECTS\Invoke_Solana_App  <- THIS PROJECT
+  - C:\PROJECTS\MAGMA-APP          <- DIFFERENT PROJECT, ignore it
 
 ---
 
-## NEXT TASK — PHASE 2: DOCUMENTATION
+## PROJECT IDENTITY
 
-### Phase 2 Epic 2.1 — Docusaurus Setup
-Start here. Commands are PowerShell on Windows.
-
-Step 1: Bootstrap Docusaurus inside the docs/ folder
-  cd C:\PROJECTS\Invoke_Solana_App
-  npx create-docusaurus@latest docs classic --typescript
-
-Step 2: Configure docusaurus.config.js
-  - title: 'Invoke SDK'
-  - tagline: 'Solana Mobile Wallet Adapter for Godot Engine'
-  - Dark mode default
-  - GitHub URL: https://github.com/plinkdev1/invoke-solana-sdk
-
-Step 3: Netlify deployment
-  - Connect GitHub repo to Netlify
-  - Auto-deploy on push to main
-  - Build command: cd docs && npm run build
-  - Publish dir: docs/build
-
-Step 4: Wire up GitHub Actions docs-check job (already stubbed in build.yml)
-
-### Phase 2 Epic 2.2 — Documentation Content
-Sections to write:
-1. Getting Started (install, first connection, Hello Phantom example)
-2. Core Concepts (MWA protocol, Android intents, Godot plugins)
-3. API Reference (every method, signal, parameter)
-4. Auth Cache Guide (backends, security, custom implementation)
-5. Session Management (connect/disconnect/reconnect patterns)
-6. Migration Guide (old Godot SDK → Invoke)
+- Project name: INVOKE (formerly GodotMWA / SolanaQuest — both deprecated)
+- SDK name: Invoke
+- Example app: InvokeQuest (formerly SolanaQuest — deprecated)
+- Repo: https://github.com/plinkdev1/invoke-solana-sdk (private until grant delivery)
+- Local path: C:\PROJECTS\Invoke_Solana_App
+- Active branch: develop (all work here, merge to main after each phase)
+- Terminal: PowerShell on Windows
 
 ---
 
-## PHASE 3 PREVIEW — INVOKEQUEST EXAMPLE APP
+## ENVIRONMENT
 
-After docs, build the example app at example/invokequest/
-- Godot 4.2+ project
-- 10 screens (Splash, Wallet Picker, Auth Result, Dashboard, Sign Tx,
-  Sign & Send, Sign Message, Capabilities, Auth Cache Demo, Settings)
-- Design: Neobrutalism + Glassmorphism (Phantom/Jupiter aesthetic)
-- Colors: #0D0F14 bg, #9945FF purple, #14F195 green
-- Fonts: Space Grotesk (display), DM Sans (body), JetBrains Mono (mono)
-- Full asset map in: _planning/SOLANAQUEST_ASSET_MAP.md
+- JDK: 17 (Microsoft OpenJDK)
+- Android SDK: C:\Users\MAXI KROOKED\AppData\Local\Android\Sdk
+- ANDROID_HOME: set as Windows env var
+- NDK: 27.1.12297006
+- compileSdk = 36, minSdk = 28, targetSdk = 34
+- Node.js: v22.22.1, npm: 10.9.4
+- Kotlin build: cd android && .\gradlew.bat assembleRelease
+- AAR output: android/plugin/build/outputs/aar/plugin-release.aar
+- gradle.properties MUST be ASCII encoded (no BOM):
+  Set-Content -Encoding ASCII
+
+---
+
+## COMPLETED PHASES
+
+### Phase 0 — Foundation (DONE, merged to main)
+- Repo scaffold, .gitignore, README, LICENSE (Apache 2.0), CONTRIBUTING.md
+- GitHub Actions CI skeleton (.github/workflows/build.yml)
+- API Parity Matrix (docs/API_PARITY_MATRIX.md)
+- Auth Cache Research (docs/AUTH_CACHE_RESEARCH.md)
+
+### Phase 1 — Core SDK (DONE, merged to main)
+
+#### Epic 1.1 — GDScript layer (addons/mobile_wallet_adapter/)
+- MWAError.gd, MWAIdentity.gd, MWAAccount.gd, MWAAuthToken.gd
+- MWASendOptions.gd, MWACapabilities.gd
+- MobileWalletAdapter.gd — main SDK class, all API methods, state machine
+- plugin.cfg — Godot addon entry point (name: InvokeMWA)
+
+#### Epic 1.2 — Kotlin Android Plugin (android/plugin/)
+- MWAError.kt, AuthCacheImpl.kt, MWABridge.kt, MWAPlugin.kt
+- Gradle build system, AndroidManifest.xml, gradlew.bat
+- BUILD SUCCESSFUL — plugin-release.aar (64KB) confirmed
+
+#### Epic 1.3 — Auth Cache GDScript layer
+- MWAAuthCache.gd, MWAMemoryCache.gd, MWAFileCache.gd
+- MWASecureCache.gd, MWACacheManager.gd
+
+### Phase 2 — Documentation (DONE, merged to main)
+- Docusaurus site at docs/ with Invoke branding, Solana purple/green theme
+- All 6 doc pages written and building successfully
+- netlify.toml configured for deployment
+
+#### Pending for docs (do before grant submission):
+- Replace default Docusaurus homepage card images with custom Invoke images
+- Generate with Recraft: feature-plugin.png, feature-cache.png, feature-api.png (512x512)
+- Place in docs/static/img/
+- Update docs/src/components/HomepageFeatures/index.tsx
+
+### Phase 3 — InvokeQuest Example App (DONE, merged to main)
+
+#### Foundation files (example/invokequest/)
+- project.godot — Godot 4.x config, 1080x1920 portrait, mobile renderer
+- autoloads/DesignTokens.gd — all colors, font sizes, spacing, animation durations
+- autoloads/SceneManager.gd — navigation stack with fade transitions
+- shaders/glass_card.gdshader — glassmorphism card effect
+- shaders/aurora_background.gdshader — animated aurora background
+- assets/images/splash/splash_logo_mark.png — Invoke logo mark (chosen: geometric rune/totem)
+- assets/images/misc/invoke_wordmark.png — Invoke wordmark (chosen: inline striped treatment)
+- assets/icons/wallets/ — Phantom, Backpack, Solflare official brand icons
+
+#### All 10 screens (example/invokequest/scenes/screens/)
+- Splash.tscn + Splash.gd
+- WalletPicker.tscn + WalletPicker.gd
+- AuthResult.tscn + AuthResult.gd
+- Dashboard.tscn + Dashboard.gd
+- SignTransaction.tscn + SignTransaction.gd
+- SignAndSend.tscn + SignAndSend.gd
+- SignMessage.tscn + SignMessage.gd
+- Capabilities.tscn + Capabilities.gd
+- AuthCache.tscn + AuthCache.gd
+- Settings.tscn + Settings.gd
+
+---
+
+## NEXT PHASE — PHASE 4: QA & GRANT SUBMISSION
+
+### Epic 4.1 — Testing
+- Open InvokeQuest in Godot editor — verify all scenes load, no errors
+- Test desktop simulation mode (F5 in editor) — all navigation flows work
+- Build Android APK and test on real device with Phantom/Backpack/Solflare
+- Verify: authorize, reauthorize from cache, sign tx, sign & send, sign message, capabilities
+- Verify: cache clear + reconnect flow on AuthCache screen
+
+### Epic 4.2 — Grant Submission Package
+- Demo video: record Android device — fresh install, Phantom auth, cache demo,
+  kill app, reopen, auto-reconnect (no popup), sign tx, sign & send, sign message
+- Upload video to YouTube (unlisted ok), get URL
+- Docs homepage images (Recraft) — 3 feature card images 512x512
+- Fill Airtable grant application with all URLs
+- README full professional treatment (see note below)
+
+---
+
+## POST-GRANT TASKS (from _planning/LANDING_PAGE_DEMO_SCOPE.md and DISTRIBUTION_GTM_SCOPE.md)
+
+These come AFTER grant submission but BEFORE going public:
+1. Landing page — premium marketing page (separate project/session)
+2. Live demo page — Godot web export embedded (HTML5/WASM build of InvokeQuest
+   running in simulation mode — MWA is Android-only so wallet calls use
+   desktop fallbacks, but UI/navigation/cache demo all work in browser)
+3. README — full professional treatment
+   Reference: https://github.com/plinkdev1/SMWA-InjectionTool
+4. Reddit/X/Mirror posts
+5. Grant submission final package
+
+### IMPORTANT NOTE ON PRESENTATION & GRANT QUALITY:
+The web demo (Godot HTML5 export) and demo video are HIGH PRIORITY even though
+they are technically post-deliverable. Grant reviewers judge on presentation.
+A live interactive demo + polished video = significantly better outcome.
+Do NOT skip these. Prioritize them before the Airtable submission deadline.
 
 ---
 
 ## CRITICAL TECHNICAL NOTES
 
-### MWA SDK version: 2.0.3
+### MWA SDK 2.0.3 API (Kotlin)
 - Identity goes in MobileWalletAdapter constructor as ConnectionIdentity
-- transact() lambda receives authResult directly — no wallet.authorize() inside
-- account.publicKey is a ByteArray (not address string)
+- transact() lambda receives authResult directly
+- account.publicKey is ByteArray (not address string — that was 1.x)
 - signMessages uses signMessagesDetached()
-- Result is TransactionResult.Success / .Failure / .NoWalletFound
+- Result types: TransactionResult.Success / .Failure / .NoWalletFound
+- ActivityResultSender requires ComponentActivity (not plain Activity)
 
-### Kotlin build:
-- Build from: C:\PROJECTS\Invoke_Solana_App\android\
-- Command: .\gradlew.bat assembleRelease
-- Output: android/plugin/build/outputs/aar/plugin-release.aar
-- gradle.properties must be ASCII encoded (no BOM) — use:
-  Set-Content -Encoding ASCII
+### GDScript conventions
+- All signals: snake_case
+- All errors: emitted via error signal, NEVER thrown
+- Plugin singleton name: InvokeMWA
+- All classes typed with class_name
 
-### Android environment:
-- JDK 17 (Microsoft OpenJDK)
-- Android SDK at: C:\Users\MAXI KROOKED\AppData\Local\Android\Sdk
-- ANDROID_HOME set as env var
-- NDK 27.1.12297006
-- compileSdk = 36, minSdk = 28, targetSdk = 34
+### Network selection
+- Stored in user://invokequest_settings.cfg via Settings.gd
+- All SDK calls should read network from this config
+- Default: devnet (correct for grant demo)
 
-### How the developer works:
-- ONE task at a time
-- Verify output before moving to next task
-- Commit + push after EVERY completed task
-- Always PowerShell commands (not bash)
-- Always confirm current directory before running commands
-- MAGMA-APP is a different project in C:\PROJECTS\ — do not confuse
+### Desktop simulation mode
+- All screens check Engine.has_singleton("InvokeMWA")
+- If plugin not present: simulate success after short delay
+- This allows testing all UI flows in Godot editor on Windows
 
-### Planning docs location:
-All reference docs are in _planning/ folder:
-- GODOTMWA_REFERENCE_IMPLEMENTATION.md (ground truth for MWA patterns)
-- GodotMWA_DEV_PLAN.md (full task list)
-- GodotMWA_PRE_PRD.md (grant scope)
-- GodotMWA_TECH_STACK.md (architecture)
-- SOLANAQUEST_ASSET_MAP.md (UI assets for example app)
+### Git workflow
+- All work on develop branch
+- git push (no flags needed — upstream already set)
+- After each phase: PR develop -> main via GitHub UI
+- PR title format: "Phase X complete — description"
 
-### README note:
-At end of project, README needs full professional treatment.
-Reference style: https://github.com/plinkdev1/SMWA-InjectionTool
-(badges, hero banner, screenshots, quick install, code examples)
+### Logo assets (locked)
+- Mark: geometric rune/totem (purple-to-teal gradient, line art)
+  Path: example/invokequest/assets/images/splash/splash_logo_mark.png
+- Wordmark: inline striped INVOKE treatment
+  Path: example/invokequest/assets/images/misc/invoke_wordmark.png
+- Both also needed for: docs site, README hero, landing page
 
 ---
 
-*Invoke SDK Agent Handoff v1.0 · Francisco (Franny) · Portugal · March 2026*
+## PLANNING DOCS (all in _planning/ folder in repo)
+
+- GODOTMWA_REFERENCE_IMPLEMENTATION.md — GROUND TRUTH for all MWA patterns
+- GodotMWA_DEV_PLAN.md — full task list for all phases
+- GodotMWA_PRE_PRD.md — grant scope and deliverables
+- GodotMWA_TECH_STACK.md — architecture reference
+- SOLANAQUEST_ASSET_MAP.md — every UI asset, font, color, animation spec
+- LANDING_PAGE_DEMO_SCOPE.md — landing page + web demo scope (post-grant)
+- DISTRIBUTION_GTM_SCOPE.md — Reddit/X/Mirror posts, GTM plan (post-grant)
+
+---
+
+## CURRENT GIT STATE
+
+Repo: https://github.com/plinkdev1/invoke-solana-sdk
+Main branch: Phase 3 merged (all 3 grant deliverables complete)
+Develop branch: up to date with main
+Last PR on main: Phase 3 complete — InvokeQuest example app (all 10 screens)
+
+---
+
+*INVOKE SDK Agent Handoff v3.0 · Francisco (Franny) · Portugal · March 2026*
