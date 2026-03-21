@@ -21,7 +21,7 @@ function HomepageHeader() {
           <Link
             className="button button--secondary button--lg"
             to="/docs/getting-started">
-            Docusaurus Tutorial - 5min ⏱️
+            Get Started ? ⏱️
           </Link>
         </div>
       </div>
@@ -42,4 +42,5 @@ export default function Home(): ReactNode {
     </Layout>
   );
 }
+
 

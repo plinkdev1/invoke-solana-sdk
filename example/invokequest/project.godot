@@ -1,0 +1,43 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; but the syntax and structure are simple.
+; Changing this file requires a restart of the Godot editor.
+
+config_version=5
+
+[application]
+
+config/name="InvokeQuest"
+config/description="InvokeQuest -- Invoke SDK example app. Demonstrates every Solana Mobile Wallet Adapter method for Godot Engine on Android."
+config/version="1.0.0"
+config/tags=PackedStringArray("android", "solana", "mwa", "invoke")
+config/features=PackedStringArray("4.2", "Mobile")
+run/main_scene="res://scenes/screens/Splash.tscn"
+
+[display]
+
+window/size/viewport_width=1080
+window/size/viewport_height=1920
+window/size/resizable=false
+window/handheld/orientation=1
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
+[rendering]
+
+renderer/rendering_method="mobile"
+renderer/rendering_method.mobile="mobile"
+environment/defaults/default_clear_color=Color(0.031, 0.039, 0.055, 1)
+textures/vram_compression/import_etc2_astc=true
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/mobile_wallet_adapter/plugin.cfg")
+[autoload]
+
+DesignTokens="*res://autoloads/DesignTokens.gd"
+SceneManager="*res://autoloads/SceneManager.gd"
