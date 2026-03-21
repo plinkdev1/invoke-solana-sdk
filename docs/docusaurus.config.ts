@@ -92,7 +92,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: 'Copyright © 2026 Francisco (Franny). Built with Docusaurus.',
+      copyright: 'Copyright © 2026 Francisco Costa. Built with Docusaurus.',
     },
     prism: {
       theme: prismThemes.dracula,
@@ -103,4 +103,7 @@ const config: Config = {
 };
 
 export default config;
+
+
+
 
