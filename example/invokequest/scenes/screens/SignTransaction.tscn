@@ -1,4 +1,4 @@
-﻿[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scenes/screens/SignTransaction.gd" id="1"]
 [ext_resource type="Shader" path="res://shaders/aurora_background.gdshader" id="2"]
