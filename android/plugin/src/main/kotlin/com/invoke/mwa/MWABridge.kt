@@ -130,6 +130,28 @@ class MWABridge(
         }
     }
 
+
+    fun tryReauthorizeFromCache(name: String, uri: String, icon: String) {
+        val cached = cache.load(activeWalletPackage)
+        if (cached == null) {
+            signal("mwa_error", MWAErrorCodes.AUTH_TOKEN_EXPIRED, "No cached token found.")
+            return
+        }
+        if (cache.shouldReuse(activeWalletPackage)) {
+            // Token is fresh (<30 min) — restore silently, no wallet interaction
+            signal("reauthorized", cached.authToken)
+            return
+        }
+        if (cache.shouldReauthorize(activeWalletPackage)) {
+            // Token is stale but valid (<24h) — reauth via wallet (picker will show)
+            reauthorize(cached.authToken, name, uri, icon)
+            return
+        }
+        // Token too old — force fresh login
+        cache.clear(activeWalletPackage)
+        signal("mwa_error", MWAErrorCodes.AUTH_TOKEN_EXPIRED, "Session expired. Please reconnect.")
+    }
+
     fun deauthorize(authToken: String) {
         scope.launch {
             try {
@@ -143,6 +165,17 @@ class MWABridge(
                 signal("mwa_error", mapErrorCode(e), e.message ?: "Unknown error")
             }
         }
+    }
+
+
+    fun disconnectWallet() {
+        val cached = cache.load(activeWalletPackage)
+        if (cached == null) {
+            cache.clear(activeWalletPackage)
+            signal("deauthorized")
+            return
+        }
+        deauthorize(cached.authToken)
     }
 
     fun signTransactions(transactionsB64: Array<String>) {

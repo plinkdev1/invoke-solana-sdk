@@ -15,6 +15,7 @@ func _ready() -> void:
 		_mwa = Engine.get_singleton("InvokeMWA")
 		_address = _mwa.cacheGetAddress()
 		_mwa.mwa_error.connect(_on_mwa_error)
+		_mwa.deauthorized.connect(_on_deauthorized)
 		_populate_address()
 		_populate_cache_status()
 		_animate_balance_count_up(0.0)
@@ -64,6 +65,10 @@ func _play_enter() -> void:
 		bt.tween_property(btn, "modulate:a", 1.0, DesignTokens.ANIM_NORMAL).set_delay(DesignTokens.ANIM_SLOW + i * DesignTokens.ANIM_STAGGER_ACTION)
 		bt.tween_property(btn, "position:y", btn.position.y - 16.0, DesignTokens.ANIM_NORMAL).set_delay(DesignTokens.ANIM_SLOW + i * DesignTokens.ANIM_STAGGER_ACTION)
 
+func _on_deauthorized() -> void:
+	SceneManager.clear_history()
+	SceneManager.replace_scene(SceneManager.SCENE_WALLET_PICKER)
+
 func _on_mwa_error(code: int, message: String) -> void:
 	print("Dashboard MWA error %d: %s" % [code, message])
 
@@ -87,6 +92,6 @@ func _on_settings_pressed() -> void:
 
 func _on_disconnect_btn_pressed() -> void:
 	if _mwa:
-		_mwa.disconnect_wallet()
+		_mwa.disconnectWallet()
 		SceneManager.clear_history()
 		SceneManager.replace_scene(SceneManager.SCENE_WALLET_PICKER)
