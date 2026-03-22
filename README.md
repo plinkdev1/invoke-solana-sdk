@@ -52,7 +52,7 @@ Godot 4 has no native Solana integration. If you want your Android game or app t
 
 <div align="center">
 
-| <img src="docs/static/img/feature-plugin.png" width="280" /> | <img src="docs/static/img/feature-cache.png" width="280" /> | <img src="docs/static/img/feature-api.png" width="280" /> |
+| <img src="docs/static/img/feature-plugin.png" height="220" /> | <img src="docs/static/img/feature-cache.png" height="220" /> | <img src="docs/static/img/feature-api.png" height="220" /> |
 |:---:|:---:|:---:|
 | **Native Android Plugin** | **Encrypted Token Cache** | **Full MWA API** |
 | Kotlin bridge, zero JNI boilerplate | AES256-GCM, silent reconnect in 30 min | Every MWA 2.0.3 method exposed to GDScript |
