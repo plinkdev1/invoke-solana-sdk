@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=6 format=3 uid="uid://pbg8gux7cx2l"]
 
 [ext_resource type="Script" path="res://scenes/screens/Dashboard.gd" id="1"]
 [ext_resource type="Shader" path="res://shaders/aurora_background.gdshader" id="2"]
@@ -15,7 +15,7 @@ shader_parameter/bg_color = Color(0.031, 0.039, 0.055, 1)
 shader = ExtResource("3")
 shader_parameter/blur_strength = 3.0
 shader_parameter/tint_color = Color(1, 1, 1, 0.06)
-shader_parameter/border_alpha = 0.10
+shader_parameter/border_alpha = 0.1
 shader_parameter/border_width = 0.008
 shader_parameter/border_color = Color(1, 1, 1, 1)
 
@@ -33,18 +33,22 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0.031, 0.039, 0.055, 1)
 
 [node name="Aurora" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_aurora")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-material = SubResource("ShaderMaterial_aurora")
-color = Color(1, 1, 1, 1)
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="TopBar" type="HBoxContainer" parent="."]
 layout_mode = 1
+anchors_preset = 10
 anchor_right = 1.0
 offset_top = 48.0
 offset_bottom = 104.0
@@ -54,21 +58,21 @@ theme_override_constants/separation = 0
 [node name="TopTitle" type="Label" parent="TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Dashboard"
-horizontal_alignment = 1
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 20
+text = "Dashboard"
+horizontal_alignment = 1
 
 [node name="SettingsBtn" type="Button" parent="TopBar"]
-layout_mode = 2
 custom_minimum_size = Vector2(72, 0)
-flat = true
-text = "⚙"
+layout_mode = 2
 theme_override_font_sizes/font_size = 22
-[connection signal="pressed" from="TopBar/SettingsBtn" to="." method="_on_settings_pressed"]
+text = "⚙"
+flat = true
 
 [node name="Scroll" type="ScrollContainer" parent="."]
 layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = 104.0
@@ -78,124 +82,124 @@ grow_vertical = 2
 [node name="VBox" type="VBoxContainer" parent="Scroll"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_constants/separation = 24
-offset_left = 40.0
-offset_right = -40.0
-offset_top = 16.0
 
 [node name="BalanceCard" type="PanelContainer" parent="Scroll/VBox"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 180)
 material = SubResource("ShaderMaterial_glass")
+custom_minimum_size = Vector2(0, 180)
+layout_mode = 2
 
 [node name="CardVBox" type="VBoxContainer" parent="Scroll/VBox/BalanceCard"]
 layout_mode = 2
 theme_override_constants/separation = 12
-offset_left = 32.0
-offset_right = -32.0
-offset_top = 24.0
-offset_bottom = -24.0
 
 [node name="AddressLabel" type="Label" parent="Scroll/VBox/BalanceCard/CardVBox"]
 layout_mode = 2
-text = "AbCd...XyZ1"
-horizontal_alignment = 1
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
 theme_override_font_sizes/font_size = 13
+text = "AbCd...XyZ1"
+horizontal_alignment = 1
 
 [node name="BalanceLabel" type="Label" parent="Scroll/VBox/BalanceCard/CardVBox"]
 layout_mode = 2
-text = "0.0000 SOL"
-horizontal_alignment = 1
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 36
+text = "0.0000 SOL"
+horizontal_alignment = 1
 
 [node name="NetworkLabel" type="Label" parent="Scroll/VBox/BalanceCard/CardVBox"]
 layout_mode = 2
-text = "Devnet"
-horizontal_alignment = 1
 theme_override_colors/font_color = Color(0.6, 0.271, 1, 1)
 theme_override_font_sizes/font_size = 12
+text = "Devnet"
+horizontal_alignment = 1
 
 [node name="SectionLabel" type="Label" parent="Scroll/VBox"]
 layout_mode = 2
-text = "SDK Methods"
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
 theme_override_font_sizes/font_size = 13
+text = "SDK Methods"
 
 [node name="ActionsGrid" type="GridContainer" parent="Scroll/VBox"]
 layout_mode = 2
-columns = 2
 theme_override_constants/h_separation = 16
 theme_override_constants/v_separation = 16
+columns = 2
 
 [node name="BtnSignTx" type="Button" parent="Scroll/VBox/ActionsGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 100)
-text = "Sign\nTransaction"
-theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-[connection signal="pressed" from="Scroll/VBox/ActionsGrid/BtnSignTx" to="." method="_on_btn_sign_tx_pressed"]
+theme_override_font_sizes/font_size = 16
+text = "Sign
+Transaction"
 
 [node name="BtnSignSend" type="Button" parent="Scroll/VBox/ActionsGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 100)
-text = "Sign &\nSend"
-theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-[connection signal="pressed" from="Scroll/VBox/ActionsGrid/BtnSignSend" to="." method="_on_btn_sign_send_pressed"]
+theme_override_font_sizes/font_size = 16
+text = "Sign &
+Send"
 
 [node name="BtnSignMsg" type="Button" parent="Scroll/VBox/ActionsGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 100)
-text = "Sign\nMessage"
-theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-[connection signal="pressed" from="Scroll/VBox/ActionsGrid/BtnSignMsg" to="." method="_on_btn_sign_msg_pressed"]
+theme_override_font_sizes/font_size = 16
+text = "Sign
+Message"
 
 [node name="BtnCaps" type="Button" parent="Scroll/VBox/ActionsGrid"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 100)
-text = "Get\nCapabilities"
-theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-[connection signal="pressed" from="Scroll/VBox/ActionsGrid/BtnCaps" to="." method="_on_btn_caps_pressed"]
+theme_override_font_sizes/font_size = 16
+text = "Get
+Capabilities"
 
 [node name="CacheRow" type="HBoxContainer" parent="Scroll/VBox"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
 [node name="CacheDot" type="ColorRect" parent="Scroll/VBox/CacheRow"]
-layout_mode = 2
 custom_minimum_size = Vector2(12, 12)
+layout_mode = 2
 color = Color(0.078, 0.945, 0.596, 1)
 
 [node name="CacheStatus" type="Label" parent="Scroll/VBox/CacheRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Session cached"
 theme_override_font_sizes/font_size = 13
+text = "Session cached"
 
 [node name="CacheBtn" type="Button" parent="Scroll/VBox/CacheRow"]
 layout_mode = 2
-flat = true
-text = "View ›"
 theme_override_colors/font_color = Color(0.6, 0.271, 1, 1)
 theme_override_font_sizes/font_size = 13
-[connection signal="pressed" from="Scroll/VBox/CacheRow/CacheBtn" to="." method="_on_cache_btn_pressed"]
+text = "View ›"
+flat = true
 
 [node name="DisconnectBtn" type="Button" parent="Scroll/VBox"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 64)
-text = "Disconnect"
-theme_override_colors/font_color = Color(1, 0.310, 0.310, 1)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.31, 0.31, 1)
 theme_override_font_sizes/font_size = 16
-[connection signal="pressed" from="Scroll/VBox/DisconnectBtn" to="." method="_on_disconnect_btn_pressed"]
+text = "Disconnect"
 
 [node name="BottomSpacer" type="Control" parent="Scroll/VBox"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[connection signal="pressed" from="TopBar/SettingsBtn" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="Scroll/VBox/ActionsGrid/BtnSignTx" to="." method="_on_btn_sign_tx_pressed"]
+[connection signal="pressed" from="Scroll/VBox/ActionsGrid/BtnSignSend" to="." method="_on_btn_sign_send_pressed"]
+[connection signal="pressed" from="Scroll/VBox/ActionsGrid/BtnSignMsg" to="." method="_on_btn_sign_msg_pressed"]
+[connection signal="pressed" from="Scroll/VBox/ActionsGrid/BtnCaps" to="." method="_on_btn_caps_pressed"]
+[connection signal="pressed" from="Scroll/VBox/CacheRow/CacheBtn" to="." method="_on_cache_btn_pressed"]
+[connection signal="pressed" from="Scroll/VBox/DisconnectBtn" to="." method="_on_disconnect_btn_pressed"]

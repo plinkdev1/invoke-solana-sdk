@@ -1,6 +1,13 @@
 ﻿# Dashboard.gd
 extends Control
 
+const CONFIG_PATH := "user://invokequest_settings.cfg"
+const RPC_ENDPOINTS := [
+	"https://api.devnet.solana.com",
+	"https://api.testnet.solana.com",
+	"https://api.mainnet-beta.solana.com"
+]
+
 @onready var address_label:  Label     = $Scroll/VBox/BalanceCard/CardVBox/AddressLabel
 @onready var balance_label:  Label     = $Scroll/VBox/BalanceCard/CardVBox/BalanceLabel
 @onready var network_label:  Label     = $Scroll/VBox/BalanceCard/CardVBox/NetworkLabel
@@ -15,9 +22,10 @@ func _ready() -> void:
 		_mwa = Engine.get_singleton("InvokeMWA")
 		_address = _mwa.cacheGetAddress()
 		_mwa.mwa_error.connect(_on_mwa_error)
+		_mwa.deauthorized.connect(_on_deauthorized)
 		_populate_address()
 		_populate_cache_status()
-		_animate_balance_count_up(0.0)
+		_fetch_balance()
 		await get_tree().process_frame
 		_play_enter()
 
@@ -64,6 +72,49 @@ func _play_enter() -> void:
 		bt.tween_property(btn, "modulate:a", 1.0, DesignTokens.ANIM_NORMAL).set_delay(DesignTokens.ANIM_SLOW + i * DesignTokens.ANIM_STAGGER_ACTION)
 		bt.tween_property(btn, "position:y", btn.position.y - 16.0, DesignTokens.ANIM_NORMAL).set_delay(DesignTokens.ANIM_SLOW + i * DesignTokens.ANIM_STAGGER_ACTION)
 
+func _on_deauthorized() -> void:
+	SceneManager.clear_history()
+	SceneManager.replace_scene(SceneManager.SCENE_WALLET_PICKER)
+
+func _get_rpc_url() -> String:
+	var config := ConfigFile.new()
+	config.load(CONFIG_PATH)
+	var override: String = config.get_value("settings", "rpc_override", "")
+	if override.strip_edges() != "":
+		return override.strip_edges()
+	var network_index: int = config.get_value("settings", "network", 0)
+	network_index = clamp(network_index, 0, RPC_ENDPOINTS.size() - 1)
+	return RPC_ENDPOINTS[network_index]
+
+func _fetch_balance() -> void:
+	if _address == "":
+		return
+	var rpc_url := _get_rpc_url()
+	var http := HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(_on_balance_response.bind(http))
+	var body := JSON.stringify({
+		"jsonrpc": "2.0",
+		"id": 1,
+		"method": "getBalance",
+		"params": [_address, {"commitment": "confirmed"}]
+	})
+	http.request(rpc_url, ["Content-Type: application/json"], HTTPClient.METHOD_POST, body)
+
+func _on_balance_response(result: int, _response_code: int, _headers: PackedStringArray, body: PackedByteArray, http: HTTPRequest) -> void:
+	http.queue_free()
+	if result != HTTPRequest.RESULT_SUCCESS:
+		return
+	var json := JSON.new()
+	if json.parse(body.get_string_from_utf8()) != OK:
+		return
+	var data = json.get_data()
+	if typeof(data) != TYPE_DICTIONARY:
+		return
+	var lamports = data.get("result", {}).get("value", 0)
+	var sol: float = float(lamports) / 1_000_000_000.0
+	_animate_balance_count_up(sol)
+
 func _on_mwa_error(code: int, message: String) -> void:
 	print("Dashboard MWA error %d: %s" % [code, message])
 
@@ -87,6 +138,6 @@ func _on_settings_pressed() -> void:
 
 func _on_disconnect_btn_pressed() -> void:
 	if _mwa:
-		_mwa.disconnect_wallet()
+		_mwa.disconnectWallet()
 		SceneManager.clear_history()
 		SceneManager.replace_scene(SceneManager.SCENE_WALLET_PICKER)

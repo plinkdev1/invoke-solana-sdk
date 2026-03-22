@@ -33,9 +33,7 @@ func _on_sign_btn_pressed() -> void:
 		await get_tree().create_timer(1.0).timeout
 		_show_result("SimulatedSignedBytes_" + msg.substr(0, 8))
 		return
-	var msg_bytes: PackedByteArray = msg.to_utf8_buffer()
-	var addr_bytes := PackedByteArray()
-	_mwa.signMessages([msg_bytes.hex_encode()], [addr_bytes.hex_encode()])
+	_mwa.signMemoMessage(msg)
 
 func _on_message_signed(signed_messages: Array) -> void:
 	var result: String = str(signed_messages[0]) if signed_messages.size() > 0 else "no result"
