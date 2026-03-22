@@ -117,6 +117,13 @@ class MWAPlugin(godot: Godot) : GodotPlugin(godot) {
             ?: emitSignal("mwa_error", MWAErrorCodes.WALLET_NOT_INSTALLED, "Bridge not initialized.")
     }
 
+
+    @UsedByGodot
+    fun signAndSendMemoTransaction(memo: String, rpcUrl: String) {
+        bridge?.signAndSendMemoTransaction(memo, rpcUrl)
+            ?: emitSignal("mwa_error", MWAErrorCodes.WALLET_NOT_INSTALLED, "Bridge not initialized.")
+    }
+
     @UsedByGodot fun cacheHasToken(): Boolean = bridge?.cacheHasToken() ?: false
     @UsedByGodot fun cacheGetAgeSeconds(): Long = bridge?.cacheGetAgeSeconds() ?: -1L
     @UsedByGodot fun cacheGetAddress(): String = bridge?.cacheGetAddress() ?: ""

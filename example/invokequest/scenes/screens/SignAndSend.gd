@@ -1,7 +1,13 @@
-﻿# SignAndSend.gd
+# SignAndSend.gd
 extends Control
 
 const SOLSCAN_BASE := "https://solscan.io/tx/%s?cluster=devnet"
+const CONFIG_PATH := "user://invokequest_settings.cfg"
+const RPC_ENDPOINTS := [
+	"https://api.devnet.solana.com",
+	"https://api.testnet.solana.com",
+	"https://api.mainnet-beta.solana.com"
+]
 
 @onready var status_label: Label          = $Scroll/VBox/StatusCard/CardVBox/StatusLabel
 @onready var sig_label:    Label          = $Scroll/VBox/ResultCard/CardVBox/SigLabel
@@ -21,8 +27,18 @@ func _ready() -> void:
 		_mwa.transaction_sent.connect(_on_transaction_sent)
 		_mwa.mwa_error.connect(_on_mwa_error)
 
+func _get_rpc_url() -> String:
+	var config := ConfigFile.new()
+	config.load(CONFIG_PATH)
+	var override: String = config.get_value("settings", "rpc_override", "")
+	if override.strip_edges() != "":
+		return override.strip_edges()
+	var network_index: int = config.get_value("settings", "network", 0)
+	network_index = clamp(network_index, 0, RPC_ENDPOINTS.size() - 1)
+	return RPC_ENDPOINTS[network_index]
+
 func _on_sign_btn_pressed() -> void:
-	status_label.text = "Waiting for wallet approval..."
+	status_label.text = "Fetching blockhash and waiting for wallet..."
 	status_label.modulate = DesignTokens.COLOR_YELLOW
 	sign_btn.disabled = true
 	if _mwa == null:
@@ -30,10 +46,8 @@ func _on_sign_btn_pressed() -> void:
 		var fake_sig := "5J3mBbAH6QkYLRFLsim" + str(Time.get_ticks_msec())
 		_show_result(fake_sig)
 		return
-	var dummy_tx := PackedByteArray()
-	dummy_tx.resize(32)
-	dummy_tx.fill(0)
-	_mwa.signAndSendTransactions([dummy_tx.hex_encode()])
+	var rpc_url := _get_rpc_url()
+	_mwa.signAndSendMemoTransaction("InvokeQuest memo tx", rpc_url)
 
 func _on_transaction_sent(signatures: Array) -> void:
 	var sig: String = str(signatures[0]) if signatures.size() > 0 else "no signature"
@@ -52,11 +66,11 @@ func _show_result(sig: String) -> void:
 	var display := sig
 	if sig.length() > 20:
 		display = sig.substr(0, 8) + "..." + sig.substr(sig.length() - 8)
-		sig_label.text = display
-		result_card.visible = true
-		result_card.modulate.a = 0.0
-		var t := create_tween()
-		t.tween_property(result_card, "modulate:a", 1.0, DesignTokens.ANIM_SLOW)
+	sig_label.text = display
+	result_card.visible = true
+	result_card.modulate.a = 0.0
+	var t := create_tween()
+	t.tween_property(result_card, "modulate:a", 1.0, DesignTokens.ANIM_SLOW)
 
 func _on_solscan_btn_pressed() -> void:
 	if _full_signature != "":

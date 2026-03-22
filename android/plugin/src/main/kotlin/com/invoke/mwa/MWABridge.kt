@@ -241,6 +241,55 @@ class MWABridge(
         }
     }
 
+
+    fun signAndSendMemoTransaction(memo: String, rpcUrl: String) {
+        if (!isSessionActive.compareAndSet(false, true)) {
+            signal("mwa_error", MWAErrorCodes.SESSION_ALREADY_ACTIVE, "A wallet session is already active.")
+            return
+        }
+        scope.launch {
+            try {
+                withTimeout(SESSION_TIMEOUT_MS) {
+                    val addressB58 = cache.load(activeWalletPackage)?.address
+                        ?: run {
+                            signal("mwa_error", MWAErrorCodes.AUTH_TOKEN_EXPIRED, "No cached address. Please reconnect.")
+                            return@withTimeout
+                        }
+                    val pubkeyBytes = Base58.decode(addressB58)
+                    val blockhash = fetchRecentBlockhash(rpcUrl)
+                        ?: run {
+                            signal("mwa_error", MWAErrorCodes.RPC_ERROR, "Failed to fetch recent blockhash.")
+                            return@withTimeout
+                        }
+                    val blockhashBytes = Base58.decode(blockhash)
+                    val txBytes = buildMemoTransaction(pubkeyBytes, blockhashBytes, memo)
+                    val adapter = buildAdapter("InvokeQuest", "https://invoke.dev", "favicon.ico")
+                    val result = adapter.transact(sender) {
+                        signAndSendTransactions(transactions = arrayOf(txBytes))
+                    }
+                    when (result) {
+                        is TransactionResult.Success -> {
+                            val sigs = result.successPayload?.signatures
+                                ?.map { Base64.encodeToString(it, Base64.NO_WRAP) }
+                                ?.toTypedArray() ?: emptyArray()
+                            signal("transaction_sent", sigs)
+                        }
+                        is TransactionResult.NoWalletFound ->
+                            signal("mwa_error", MWAErrorCodes.WALLET_NOT_INSTALLED, "No wallet found.")
+                        is TransactionResult.Failure ->
+                            signal("mwa_error", mapErrorCode(result.e), result.e.message ?: "Sign and send failed")
+                    }
+                }
+            } catch (e: TimeoutCancellationException) {
+                signal("mwa_error", MWAErrorCodes.NETWORK_TIMEOUT, "Timed out after 60s.")
+            } catch (e: Exception) {
+                signal("mwa_error", mapErrorCode(e), e.message ?: "Unknown error")
+            } finally {
+                isSessionActive.set(false)
+            }
+        }
+    }
+
     fun signMessages(messagesB64: Array<String>, addressesB64: Array<String>) {
         if (!isSessionActive.compareAndSet(false, true)) {
             signal("mwa_error", MWAErrorCodes.SESSION_ALREADY_ACTIVE, "A wallet session is already active.")
