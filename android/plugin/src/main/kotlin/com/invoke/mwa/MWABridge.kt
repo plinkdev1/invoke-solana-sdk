@@ -324,6 +324,141 @@ class MWABridge(
         }
     }
 
+
+    fun signMemoTransaction(memo: String, rpcUrl: String) {
+        if (!isSessionActive.compareAndSet(false, true)) {
+            signal("mwa_error", MWAErrorCodes.SESSION_ALREADY_ACTIVE, "A wallet session is already active.")
+            return
+        }
+        scope.launch {
+            try {
+                withTimeout(SESSION_TIMEOUT_MS) {
+                    // 1. Get cached address (public key)
+                    val addressB58 = cache.load(activeWalletPackage)?.address
+                        ?: run {
+                            signal("mwa_error", MWAErrorCodes.AUTH_TOKEN_EXPIRED, "No cached address. Please reconnect.")
+                            return@withTimeout
+                        }
+                    val pubkeyBytes = Base58.decode(addressB58)
+
+                    // 2. Fetch recent blockhash from RPC
+                    val blockhash = fetchRecentBlockhash(rpcUrl)
+                        ?: run {
+                            signal("mwa_error", MWAErrorCodes.RPC_ERROR, "Failed to fetch recent blockhash.")
+                            return@withTimeout
+                        }
+                    val blockhashBytes = Base58.decode(blockhash)
+
+                    // 3. Build memo transaction bytes
+                    val txBytes = buildMemoTransaction(pubkeyBytes, blockhashBytes, memo)
+
+                    // 4. Sign via MWA
+                    val adapter = buildAdapter("InvokeQuest", "https://invoke.dev", "favicon.ico")
+                    val result = adapter.transact(sender) {
+                        signTransactions(transactions = arrayOf(txBytes))
+                    }
+                    when (result) {
+                        is TransactionResult.Success -> {
+                            val sigs = result.successPayload?.signedPayloads
+                                ?.map { Base64.encodeToString(it, Base64.NO_WRAP) }
+                                ?.toTypedArray() ?: emptyArray()
+                            signal("transaction_signed", sigs)
+                        }
+                        is TransactionResult.NoWalletFound ->
+                            signal("mwa_error", MWAErrorCodes.WALLET_NOT_INSTALLED, "No wallet found.")
+                        is TransactionResult.Failure ->
+                            signal("mwa_error", mapErrorCode(result.e), result.e.message ?: "Sign failed")
+                    }
+                }
+            } catch (e: TimeoutCancellationException) {
+                signal("mwa_error", MWAErrorCodes.NETWORK_TIMEOUT, "Timed out after 60s.")
+            } catch (e: Exception) {
+                signal("mwa_error", mapErrorCode(e), e.message ?: "Unknown error")
+            } finally {
+                isSessionActive.set(false)
+            }
+        }
+    }
+
+    private suspend fun fetchRecentBlockhash(rpcUrl: String): String? {
+        return withContext(Dispatchers.IO) { try {
+            val url = java.net.URL(rpcUrl)
+            val conn = url.openConnection() as java.net.HttpURLConnection
+            conn.requestMethod = "POST"
+            conn.setRequestProperty("Content-Type", "application/json")
+            conn.doOutput = true
+            conn.connectTimeout = 10_000
+            conn.readTimeout = 10_000
+            val body = """{"jsonrpc":"2.0","id":1,"method":"getLatestBlockhash","params":[{"commitment":"finalized"}]}"""
+            conn.outputStream.use { it.write(body.toByteArray()) }
+            val response = conn.inputStream.bufferedReader().readText()
+            conn.disconnect()
+            // Parse blockhash from JSON response
+            val match = Regex(""""blockhash"\s*:\s*"([A-Za-z0-9]+)"""").find(response)
+            match?.groupValues?.get(1)
+        } catch (e: Exception) {
+            Log.e(TAG, "fetchRecentBlockhash failed: $e")
+            null
+        } }
+    }
+
+    private fun buildMemoTransaction(feePayer: ByteArray, blockhash: ByteArray, memo: String): ByteArray {
+        // Memo program ID
+        val memoProgramId = Base58.decode("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr")
+        val memoBytes = memo.toByteArray(Charsets.UTF_8)
+
+        // Transaction layout:
+        // [1 byte] num_signatures = 1
+        // [64 bytes] signature placeholder (zeros)
+        // [1 byte] num_required_signers = 1
+        // [1 byte] num_readonly_signed = 0
+        // [1 byte] num_readonly_unsigned = 1
+        // [1 byte] num_accounts = 2
+        // [32 bytes] fee payer pubkey
+        // [32 bytes] memo program id
+        // [32 bytes] recent blockhash
+        // [1 byte] num_instructions = 1
+        // Instruction:
+        //   [1 byte] program_id_index = 1
+        //   [1 byte] num_accounts = 0
+        //   [compact-u16] data length
+        //   [N bytes] memo data
+
+        val buf = java.io.ByteArrayOutputStream()
+
+        // Header
+        buf.write(1)                    // num_signatures
+        buf.write(ByteArray(64))        // signature placeholder
+        buf.write(1)                    // num_required_signers
+        buf.write(0)                    // num_readonly_signed
+        buf.write(1)                    // num_readonly_unsigned
+
+        // Account keys
+        buf.write(2)                    // num_accounts
+        buf.write(feePayer)             // fee payer
+        buf.write(memoProgramId)        // memo program
+
+        // Recent blockhash
+        buf.write(blockhash)
+
+        // Instructions
+        buf.write(1)                    // num_instructions
+        buf.write(1)                    // program_id_index (memo program = index 1)
+        buf.write(0)                    // num_account_indices
+
+        // Compact-u16 encoding for memo length
+        val memoLen = memoBytes.size
+        if (memoLen < 128) {
+            buf.write(memoLen)
+        } else {
+            buf.write((memoLen and 0x7F) or 0x80)
+            buf.write(memoLen shr 7)
+        }
+        buf.write(memoBytes)
+
+        return buf.toByteArray()
+    }
+
     fun cacheHasToken(): Boolean    = cache.hasToken(activeWalletPackage)
     fun cacheGetAgeSeconds(): Long  = cache.getAgeSeconds(activeWalletPackage)
     fun cacheGetAddress(): String   = cache.load(activeWalletPackage)?.address ?: ""

@@ -46,7 +46,7 @@ func _on_rpc_input_text_submitted(_new_text: String) -> void:
 func _on_danger_btn_pressed() -> void:
 	if _mwa:
 		_mwa.cacheClearAll()
-		_mwa.disconnect_wallet()
+		_mwa.disconnectWallet()
 		SceneManager.clear_history()
 		SceneManager.replace_scene(SceneManager.SCENE_WALLET_PICKER)
 
