@@ -1,11 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://dq5hfo3ghir85"]
+[gd_scene load_steps=8 format=3 uid="uid://brswwyp2rshnl"]
 
 [ext_resource type="Script" path="res://scenes/screens/WalletPicker.gd" id="1"]
 [ext_resource type="Shader" path="res://shaders/aurora_background.gdshader" id="2"]
 [ext_resource type="Texture2D" uid="uid://d3syfeb82hfhi" path="res://assets/icons/wallets/wallet_phantom.png" id="4"]
 [ext_resource type="Texture2D" uid="uid://dpqrvmla3eyu8" path="res://assets/icons/wallets/wallet_backpack.png" id="5"]
 [ext_resource type="Texture2D" uid="uid://cleqx03s1shrd" path="res://assets/icons/wallets/wallet_solflare.png" id="6"]
-[ext_resource type="Texture2D" uid="uid://cleqx03s1shrd" path="res://assets/icons/wallets/wallet_jupiter.png" id="7"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_aurora"]
 shader = ExtResource("2")
@@ -65,20 +64,19 @@ grow_vertical = 2
 [node name="VBox" type="VBoxContainer" parent="Scroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 32
+theme_override_constants/separation = 20
 
 [node name="TitleLabel" type="Label" parent="Scroll/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 42
+theme_override_font_sizes/font_size = 28
 text = "Connect Your Wallet"
 horizontal_alignment = 1
 
 [node name="SubLabel" type="Label" parent="Scroll/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.5)
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 14
 text = "Choose a wallet to get started"
 horizontal_alignment = 1
 
@@ -87,7 +85,7 @@ custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
 [node name="CardPhantom" type="PanelContainer" parent="Scroll/VBox"]
-custom_minimum_size = Vector2(0, 140)
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
@@ -97,14 +95,14 @@ flat = true
 
 [node name="Row" type="HBoxContainer" parent="Scroll/VBox/CardPhantom/BtnPhantom"]
 layout_mode = 2
-offset_left = 24.0
-offset_top = 20.0
-offset_right = -24.0
-offset_bottom = -20.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = -16.0
 theme_override_constants/separation = 20
 
 [node name="Icon" type="TextureRect" parent="Scroll/VBox/CardPhantom/BtnPhantom/Row"]
-custom_minimum_size = Vector2(80, 80)
+custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("4")
@@ -120,23 +118,23 @@ theme_override_constants/separation = 4
 [node name="Name" type="Label" parent="Scroll/VBox/CardPhantom/BtnPhantom/Row/TextVBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 18
 text = "Phantom"
 
 [node name="Sub" type="Label" parent="Scroll/VBox/CardPhantom/BtnPhantom/Row/TextVBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.45)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 13
 text = "Most Popular"
 
 [node name="Arrow" type="Label" parent="Scroll/VBox/CardPhantom/BtnPhantom/Row"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.271, 1, 1)
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 32
 text = "›"
 
 [node name="CardBackpack" type="PanelContainer" parent="Scroll/VBox"]
-custom_minimum_size = Vector2(0, 140)
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
@@ -146,14 +144,14 @@ flat = true
 
 [node name="Row" type="HBoxContainer" parent="Scroll/VBox/CardBackpack/BtnBackpack"]
 layout_mode = 2
-offset_left = 24.0
-offset_top = 20.0
-offset_right = -24.0
-offset_bottom = -20.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = -16.0
 theme_override_constants/separation = 20
 
 [node name="Icon" type="TextureRect" parent="Scroll/VBox/CardBackpack/BtnBackpack/Row"]
-custom_minimum_size = Vector2(80, 80)
+custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("5")
@@ -169,23 +167,23 @@ theme_override_constants/separation = 4
 [node name="Name" type="Label" parent="Scroll/VBox/CardBackpack/BtnBackpack/Row/TextVBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 18
 text = "Backpack"
 
 [node name="Sub" type="Label" parent="Scroll/VBox/CardBackpack/BtnBackpack/Row/TextVBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.45)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 13
 text = "xNFT Wallet"
 
 [node name="Arrow" type="Label" parent="Scroll/VBox/CardBackpack/BtnBackpack/Row"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.271, 1, 1)
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 32
 text = "›"
 
 [node name="CardSolflare" type="PanelContainer" parent="Scroll/VBox"]
-custom_minimum_size = Vector2(0, 140)
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
@@ -195,14 +193,14 @@ flat = true
 
 [node name="Row" type="HBoxContainer" parent="Scroll/VBox/CardSolflare/BtnSolflare"]
 layout_mode = 2
-offset_left = 24.0
-offset_top = 20.0
-offset_right = -24.0
-offset_bottom = -20.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = -16.0
 theme_override_constants/separation = 20
 
 [node name="Icon" type="TextureRect" parent="Scroll/VBox/CardSolflare/BtnSolflare/Row"]
-custom_minimum_size = Vector2(80, 80)
+custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("6")
@@ -218,68 +216,19 @@ theme_override_constants/separation = 4
 [node name="Name" type="Label" parent="Scroll/VBox/CardSolflare/BtnSolflare/Row/TextVBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 18
 text = "Solflare"
 
 [node name="Sub" type="Label" parent="Scroll/VBox/CardSolflare/BtnSolflare/Row/TextVBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.45)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 13
 text = "DeFi Focused"
 
 [node name="Arrow" type="Label" parent="Scroll/VBox/CardSolflare/BtnSolflare/Row"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.271, 1, 1)
-theme_override_font_sizes/font_size = 48
-text = "›"
-
-[node name="CardJupiter" type="PanelContainer" parent="Scroll/VBox"]
-custom_minimum_size = Vector2(0, 140)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_card")
-
-[node name="BtnJupiter" type="Button" parent="Scroll/VBox/CardJupiter"]
-layout_mode = 2
-flat = true
-
-[node name="Row" type="HBoxContainer" parent="Scroll/VBox/CardJupiter/BtnJupiter"]
-layout_mode = 2
-offset_left = 24.0
-offset_top = 20.0
-offset_right = -24.0
-offset_bottom = -20.0
-theme_override_constants/separation = 20
-
-[node name="Icon" type="TextureRect" parent="Scroll/VBox/CardJupiter/BtnJupiter/Row"]
-custom_minimum_size = Vector2(80, 80)
-layout_mode = 2
-size_flags_vertical = 4
-texture = ExtResource("7")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextVBox" type="VBoxContainer" parent="Scroll/VBox/CardJupiter/BtnJupiter/Row"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-theme_override_constants/separation = 4
-
-[node name="Name" type="Label" parent="Scroll/VBox/CardJupiter/BtnJupiter/Row/TextVBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 28
-text = "Jupiter"
-
-[node name="Sub" type="Label" parent="Scroll/VBox/CardJupiter/BtnJupiter/Row/TextVBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 0.45)
-theme_override_font_sizes/font_size = 20
-text = "DEX Aggregator"
-
-[node name="Arrow" type="Label" parent="Scroll/VBox/CardJupiter/BtnJupiter/Row"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.271, 1, 1)
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 32
 text = "›"
 
 [node name="LoadingOverlay" type="Control" parent="."]
@@ -317,4 +266,3 @@ horizontal_alignment = 1
 [connection signal="pressed" from="Scroll/VBox/CardPhantom/BtnPhantom" to="." method="_on_card_pressed" binds= [0]]
 [connection signal="pressed" from="Scroll/VBox/CardBackpack/BtnBackpack" to="." method="_on_card_pressed" binds= [1]]
 [connection signal="pressed" from="Scroll/VBox/CardSolflare/BtnSolflare" to="." method="_on_card_pressed" binds= [2]]
-[connection signal="pressed" from="Scroll/VBox/CardJupiter/BtnJupiter" to="." method="_on_card_pressed" binds= [3]]
