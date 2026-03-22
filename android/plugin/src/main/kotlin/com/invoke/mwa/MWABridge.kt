@@ -169,13 +169,8 @@ class MWABridge(
 
 
     fun disconnectWallet() {
-        val cached = cache.load(activeWalletPackage)
-        if (cached == null) {
-            cache.clear(activeWalletPackage)
-            signal("deauthorized")
-            return
-        }
-        deauthorize(cached.authToken)
+        cache.clear(activeWalletPackage)
+        signal("deauthorized")
     }
 
     fun signTransactions(transactionsB64: Array<String>) {
