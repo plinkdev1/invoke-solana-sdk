@@ -77,3 +77,15 @@ example/invokequest/debug.keystore
 example/invokequest/invokequest.keystore
 *.apk
 *.idsig
+
+
+# Debug/fix scripts
+fix_*.py
+write_*.py
+patch_*.py
+diagnose_*.py
+add_*.py
+round_*.py
+reindent_*.py
+
+# Android build directory (generated)
