@@ -1,7 +1,7 @@
 # SignAndSend.gd
 extends Control
 
-const SOLSCAN_BASE := "https://solscan.io/tx/%s?cluster=devnet"
+# SOLSCAN_BASE is now built dynamically from settings
 const CONFIG_PATH := "user://invokequest_settings.cfg"
 const RPC_ENDPOINTS := [
 	"https://api.devnet.solana.com",
@@ -72,9 +72,19 @@ func _show_result(sig: String) -> void:
 	var t := create_tween()
 	t.tween_property(result_card, "modulate:a", 1.0, DesignTokens.ANIM_SLOW)
 
+func _get_solscan_url(sig: String) -> String:
+	var config := ConfigFile.new()
+	config.load(CONFIG_PATH)
+	var idx: int = config.get_value("settings", "network", 0)
+	idx = clamp(idx, 0, 2)
+	var cluster := ["devnet", "testnet", ""][idx]
+	if cluster == "":
+		return "https://solscan.io/tx/%s" % sig
+	return "https://solscan.io/tx/%s?cluster=%s" % [sig, cluster]
+
 func _on_solscan_btn_pressed() -> void:
 	if _full_signature != "":
-		OS.shell_open(SOLSCAN_BASE % _full_signature)
+		OS.shell_open(_get_solscan_url(_full_signature))
 
 func _on_back_btn_pressed() -> void:
 	SceneManager.pop_scene()

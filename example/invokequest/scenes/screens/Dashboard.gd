@@ -34,7 +34,7 @@ func _populate_address() -> void:
 	if _address.length() > 12:
 		display = _address.substr(0, 4) + "..." + _address.substr(_address.length() - 4)
 		address_label.text = display if display != "" else "Not connected"
-		network_label.text = "Devnet"
+		network_label.text = _get_network_name()
 
 func _populate_cache_status() -> void:
 	var has_token := false
@@ -141,3 +141,10 @@ func _on_disconnect_btn_pressed() -> void:
 		_mwa.disconnectWallet()
 		SceneManager.clear_history()
 		SceneManager.replace_scene(SceneManager.SCENE_WALLET_PICKER)
+
+func _get_network_name() -> String:
+	var config := ConfigFile.new()
+	config.load(CONFIG_PATH)
+	var idx: int = config.get_value("settings", "network", 0)
+	idx = clamp(idx, 0, 2)
+	return ["Devnet", "Testnet", "Mainnet"][idx]
