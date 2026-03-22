@@ -326,6 +326,53 @@ class MWABridge(
         }
     }
 
+
+    fun signMemoMessage(message: String) {
+        if (!isSessionActive.compareAndSet(false, true)) {
+            signal("mwa_error", MWAErrorCodes.SESSION_ALREADY_ACTIVE, "A wallet session is already active.")
+            return
+        }
+        scope.launch {
+            try {
+                withTimeout(SESSION_TIMEOUT_MS) {
+                    val addressB58 = cache.load(activeWalletPackage)?.address
+                        ?: run {
+                            signal("mwa_error", MWAErrorCodes.AUTH_TOKEN_EXPIRED, "No cached address. Please reconnect.")
+                            return@withTimeout
+                        }
+                    val pubkeyBytes = Base58.decode(addressB58)
+                    val messageBytes = message.toByteArray(Charsets.UTF_8)
+                    val adapter = buildAdapter("InvokeQuest", "https://invoke.dev", "favicon.ico")
+                    val result = adapter.transact(sender) {
+                        signMessagesDetached(
+                            messages  = arrayOf(messageBytes),
+                            addresses = arrayOf(pubkeyBytes)
+                        )
+                    }
+                    when (result) {
+                        is TransactionResult.Success -> {
+                            val signed = result.successPayload?.messages
+                                ?.mapNotNull { it.signatures.firstOrNull() }
+                                ?.map { Base64.encodeToString(it, Base64.NO_WRAP) }
+                                ?.toTypedArray() ?: emptyArray()
+                            signal("message_signed", signed)
+                        }
+                        is TransactionResult.NoWalletFound ->
+                            signal("mwa_error", MWAErrorCodes.WALLET_NOT_INSTALLED, "No wallet found.")
+                        is TransactionResult.Failure ->
+                            signal("mwa_error", mapErrorCode(result.e), result.e.message ?: "Sign message failed")
+                    }
+                }
+            } catch (e: TimeoutCancellationException) {
+                signal("mwa_error", MWAErrorCodes.NETWORK_TIMEOUT, "Timed out after 60s.")
+            } catch (e: Exception) {
+                signal("mwa_error", mapErrorCode(e), e.message ?: "Unknown error")
+            } finally {
+                isSessionActive.set(false)
+            }
+        }
+    }
+
     fun getCapabilities() {
         scope.launch {
             try {
