@@ -1,7 +1,7 @@
 <div align="center">
 
 <img src="docs/static/img/invoke-logo-mark.png" width="48" align="left" style="margin-right:12px" />
-<img src="docs/static/img/invoke-logo-text.png" height="48" />
+<img src="docs/static/img/invoke-logo-text.png" height="64" />
 
 <br clear="both" />
 
