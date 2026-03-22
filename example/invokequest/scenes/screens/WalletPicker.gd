@@ -5,7 +5,6 @@ const WALLETS := [
 { "name": "Phantom",  "package": "app.phantom",        "label": "Most Popular" },
 { "name": "Backpack", "package": "com.backpack.wallet", "label": "xNFT Wallet" },
 { "name": "Solflare", "package": "com.solflare.mobile", "label": "DeFi Focused" },
-{ "name": "Jupiter",  "package": "ag.jup.jupiter.android", "label": "DEX Aggregator" },
 ]
 
 var _mwa = null
@@ -14,7 +13,6 @@ var _selected_wallet: String = ""
 @onready var card_phantom:  PanelContainer = $Scroll/VBox/CardPhantom
 @onready var card_backpack: PanelContainer = $Scroll/VBox/CardBackpack
 @onready var card_solflare: PanelContainer = $Scroll/VBox/CardSolflare
-@onready var card_jupiter:  PanelContainer = $Scroll/VBox/CardJupiter
 @onready var loading_overlay: Control      = $LoadingOverlay
 @onready var status_label: Label           = $LoadingOverlay/StatusLabel
 
@@ -28,7 +26,7 @@ func _ready() -> void:
 		_play_stagger_in()
 
 func _play_stagger_in() -> void:
-	var cards := [card_phantom, card_backpack, card_solflare, card_jupiter]
+	var cards := [card_phantom, card_backpack, card_solflare]
 	for i in cards.size():
 		var card: Control = cards[i]
 		var rest_y := card.position.y
