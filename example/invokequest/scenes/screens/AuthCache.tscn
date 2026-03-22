@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=6 format=3 uid="uid://bq8k4kfo31kuk"]
 
 [ext_resource type="Script" path="res://scenes/screens/AuthCache.gd" id="1"]
 [ext_resource type="Shader" path="res://shaders/aurora_background.gdshader" id="2"]
@@ -15,7 +15,7 @@ shader_parameter/bg_color = Color(0.031, 0.039, 0.055, 1)
 shader = ExtResource("3")
 shader_parameter/blur_strength = 3.0
 shader_parameter/tint_color = Color(1, 1, 1, 0.06)
-shader_parameter/border_alpha = 0.10
+shader_parameter/border_alpha = 0.1
 shader_parameter/border_width = 0.008
 shader_parameter/border_color = Color(1, 1, 1, 1)
 
@@ -33,49 +33,52 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0.031, 0.039, 0.055, 1)
 
 [node name="Aurora" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_aurora")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-material = SubResource("ShaderMaterial_aurora")
-color = Color(1, 1, 1, 1)
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="TopBar" type="HBoxContainer" parent="."]
 layout_mode = 1
+anchors_preset = 10
 anchor_right = 1.0
 offset_top = 48.0
 offset_bottom = 104.0
 grow_horizontal = 2
 
 [node name="BackArrow" type="Button" parent="TopBar"]
-layout_mode = 2
 custom_minimum_size = Vector2(72, 0)
-flat = true
-text = "‹"
+layout_mode = 2
 theme_override_font_sizes/font_size = 28
-[connection signal="pressed" from="TopBar/BackArrow" to="." method="_on_back_btn_pressed"]
+text = "‹"
+flat = true
 
 [node name="TopTitle" type="Label" parent="TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Auth Cache"
-horizontal_alignment = 1
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 20
+text = "Auth Cache"
+horizontal_alignment = 1
 
 [node name="RefreshBtn" type="Button" parent="TopBar"]
-layout_mode = 2
 custom_minimum_size = Vector2(72, 0)
-flat = true
-text = "↺"
+layout_mode = 2
 theme_override_font_sizes/font_size = 22
-[connection signal="pressed" from="TopBar/RefreshBtn" to="." method="_on_refresh_btn_pressed"]
+text = "↺"
+flat = true
 
 [node name="Scroll" type="ScrollContainer" parent="."]
 layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = 104.0
@@ -85,43 +88,37 @@ grow_vertical = 2
 [node name="VBox" type="VBoxContainer" parent="Scroll"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_constants/separation = 24
-offset_left = 40.0
-offset_right = -40.0
-offset_top = 16.0
 
 [node name="DescLabel" type="Label" parent="Scroll/VBox"]
 layout_mode = 2
-text = "The auth token cache stores your wallet session so the approval popup only appears once. This screen shows the live cache state."
-autowrap_mode = 3
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
 theme_override_font_sizes/font_size = 14
+text = "The auth token cache stores your wallet session so the approval popup only appears once. This screen shows the live cache state."
+autowrap_mode = 3
 
 [node name="StatusRow" type="HBoxContainer" parent="Scroll/VBox"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
 [node name="StatusDot" type="ColorRect" parent="Scroll/VBox/StatusRow"]
-layout_mode = 2
 custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
 color = Color(0.078, 0.945, 0.596, 1)
 
 [node name="StatusLabel" type="Label" parent="Scroll/VBox/StatusRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Token cached"
 theme_override_font_sizes/font_size = 16
+text = "Token cached"
 
 [node name="InfoCard" type="PanelContainer" parent="Scroll/VBox"]
-layout_mode = 2
 material = SubResource("ShaderMaterial_glass")
+layout_mode = 2
 
 [node name="CardVBox" type="VBoxContainer" parent="Scroll/VBox/InfoCard"]
 layout_mode = 2
-offset_left = 24.0
-offset_right = -24.0
-offset_top = 20.0
-offset_bottom = -20.0
 theme_override_constants/separation = 18
 
 [node name="AddressRow" type="HBoxContainer" parent="Scroll/VBox/InfoCard/CardVBox"]
@@ -130,14 +127,14 @@ layout_mode = 2
 [node name="KeyLabel" type="Label" parent="Scroll/VBox/InfoCard/CardVBox/AddressRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Wallet Address"
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
 theme_override_font_sizes/font_size = 14
+text = "Wallet Address"
 
 [node name="ValueLabel" type="Label" parent="Scroll/VBox/InfoCard/CardVBox/AddressRow"]
 layout_mode = 2
-text = "—"
 theme_override_font_sizes/font_size = 14
+text = "—"
 
 [node name="AgeRow" type="HBoxContainer" parent="Scroll/VBox/InfoCard/CardVBox"]
 layout_mode = 2
@@ -145,14 +142,14 @@ layout_mode = 2
 [node name="KeyLabel" type="Label" parent="Scroll/VBox/InfoCard/CardVBox/AgeRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Token Age"
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
 theme_override_font_sizes/font_size = 14
+text = "Token Age"
 
 [node name="ValueLabel" type="Label" parent="Scroll/VBox/InfoCard/CardVBox/AgeRow"]
 layout_mode = 2
-text = "—"
 theme_override_font_sizes/font_size = 14
+text = "—"
 
 [node name="StaleRow" type="HBoxContainer" parent="Scroll/VBox/InfoCard/CardVBox"]
 layout_mode = 2
@@ -160,65 +157,63 @@ layout_mode = 2
 [node name="KeyLabel" type="Label" parent="Scroll/VBox/InfoCard/CardVBox/StaleRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Is Stale"
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
 theme_override_font_sizes/font_size = 14
+text = "Is Stale"
 
 [node name="ValueLabel" type="Label" parent="Scroll/VBox/InfoCard/CardVBox/StaleRow"]
 layout_mode = 2
-text = "—"
 theme_override_font_sizes/font_size = 14
+text = "—"
 
 [node name="ClearBtn" type="Button" parent="Scroll/VBox"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 64)
-text = "Clear Cache"
-theme_override_colors/font_color = Color(1, 0.310, 0.310, 1)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.31, 0.31, 1)
 theme_override_font_sizes/font_size = 16
-[connection signal="pressed" from="Scroll/VBox/ClearBtn" to="." method="_on_clear_btn_pressed"]
+text = "Clear Cache"
 
 [node name="ReconnectBtn" type="Button" parent="Scroll/VBox"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 64)
-text = "Force Reconnect"
+layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.271, 1, 1)
 theme_override_font_sizes/font_size = 16
-[connection signal="pressed" from="Scroll/VBox/ReconnectBtn" to="." method="_on_reconnect_btn_pressed"]
+text = "Force Reconnect"
 
 [node name="LogCard" type="PanelContainer" parent="Scroll/VBox"]
-layout_mode = 2
 material = SubResource("ShaderMaterial_glass")
+layout_mode = 2
 
 [node name="CardVBox" type="VBoxContainer" parent="Scroll/VBox/LogCard"]
 layout_mode = 2
-offset_left = 24.0
-offset_right = -24.0
-offset_top = 16.0
-offset_bottom = -16.0
 theme_override_constants/separation = 8
 
 [node name="LogTitle" type="Label" parent="Scroll/VBox/LogCard/CardVBox"]
 layout_mode = 2
-text = "Cache Log"
 theme_override_colors/font_color = Color(1, 1, 1, 0.5)
 theme_override_font_sizes/font_size = 11
+text = "Cache Log"
 
 [node name="LogLabel" type="Label" parent="Scroll/VBox/LogCard/CardVBox"]
 layout_mode = 2
-text = ""
-autowrap_mode = 3
 theme_override_colors/font_color = Color(0.078, 0.945, 0.596, 0.8)
 theme_override_font_sizes/font_size = 11
+autowrap_mode = 3
 
 [node name="BackBtn" type="Button" parent="Scroll/VBox"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 56)
-flat = true
-text = "← Back to Dashboard"
+layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
 theme_override_font_sizes/font_size = 14
-[connection signal="pressed" from="Scroll/VBox/BackBtn" to="." method="_on_back_btn_pressed"]
+text = "← Back to Dashboard"
+flat = true
 
 [node name="BottomSpacer" type="Control" parent="Scroll/VBox"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[connection signal="pressed" from="TopBar/BackArrow" to="." method="_on_back_btn_pressed"]
+[connection signal="pressed" from="TopBar/RefreshBtn" to="." method="_on_refresh_btn_pressed"]
+[connection signal="pressed" from="Scroll/VBox/ClearBtn" to="." method="_on_clear_btn_pressed"]
+[connection signal="pressed" from="Scroll/VBox/ReconnectBtn" to="." method="_on_reconnect_btn_pressed"]
+[connection signal="pressed" from="Scroll/VBox/BackBtn" to="." method="_on_back_btn_pressed"]
