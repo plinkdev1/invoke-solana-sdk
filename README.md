@@ -87,7 +87,7 @@ Tested on Samsung Galaxy Android 14, March 2026:
 | Wallet | authorize | signTx | signAndSend | signMessage | Notes |
 |---|---|---|---|---|---|
 | **Solflare** | ✅ | ✅ | ✅ | ✅ | Best for testing |
-| **Jupiter** | ✅ | ✅ | ❌ error -3 | ✅ | Strict tx validation |
+| **Jupiter** | ✅ | ✅ | ✅ | ✅ | |
 | **Phantom** | ❌ | — | — | — | Domain not verified |
 | **Backpack** | ❌ | — | — | — | MWA 2.0 incompatible |
 
@@ -281,7 +281,6 @@ invoke-solana-sdk/
 
 - **Backpack** — MWA 2.0 incompatible, not supported
 - **Phantom** — Rejects unverified dApp domains (register at [developer.phantom.app](https://developer.phantom.app))
-- **Jupiter signAndSend** — Returns error -3 due to strict transaction validation
 - **Silent reconnect** — Only within 30-minute window; stale sessions trigger wallet picker
 - **Wallet picker on every sign** — MWA protocol requirement, not a bug
 
