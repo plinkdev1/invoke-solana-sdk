@@ -1,4 +1,8 @@
-package com.invoke.mwa
+import os
+
+path = r"C:\PROJECTS\Invoke_Solana_App\android\plugin\src\main\kotlin\com\invoke\mwa\MWABridge.kt"
+
+content = '''package com.invoke.mwa
 
 import android.util.Base64
 import android.util.Log
@@ -25,6 +29,7 @@ class MWABridge(
     private val gson  = Gson()
 
     private var activeWalletPackage = "app.phantom"
+    private var walletAdapter: MobileWalletAdapter? = null
 
     private fun signal(name: String, vararg args: Any) {
         onSignal(name, arrayOf(*args))
@@ -34,7 +39,7 @@ class MWABridge(
         return MobileWalletAdapter(
             connectionIdentity = ConnectionIdentity(
                 identityUri  = android.net.Uri.parse(uri),
-                iconUri      = android.net.Uri.parse("favicon.ico"),
+                iconUri      = android.net.Uri.parse(icon),
                 identityName = name
             )
         )
@@ -48,41 +53,31 @@ class MWABridge(
         scope.launch {
             try {
                 withTimeout(SESSION_TIMEOUT_MS) {
-                    Log.d(TAG, "authorize: building adapter name=$name uri=$uri")
                     val adapter = buildAdapter(name, uri, icon)
-                    Log.d(TAG, "authorize: calling transact")
-                    val result = adapter.transact(sender) {
-                        Log.d(TAG, "authorize: inside transact lambda, calling authorize()")
-                        authorize(
-                            identityUri  = android.net.Uri.parse(uri),
-                            iconUri      = android.net.Uri.parse("favicon.ico"),
-                            identityName = name
-                        )
+                    val rpcCluster = when (cluster) {
+                        "mainnet-beta" -> RpcCluster.MainnetBeta
+                        "testnet"      -> RpcCluster.Testnet
+                        else           -> RpcCluster.Devnet
                     }
-                    Log.d(TAG, "authorize: transact returned result=$result")
+                    val result = adapter.transact(sender) { authResult ->
+                        authResult
+                    }
                     when (result) {
                         is TransactionResult.Success -> {
-                            Log.d(TAG, "authorize: SUCCESS")
                             val auth       = result.authResult
                             val addressB58 = Base58.encodeToString(auth.accounts.first().publicKey)
                             cache.save(activeWalletPackage, auth.authToken, addressB58)
                             signal("authorized", auth.authToken, addressB58)
                         }
-                        is TransactionResult.NoWalletFound -> {
-                            Log.d(TAG, "authorize: NO WALLET FOUND")
+                        is TransactionResult.NoWalletFound ->
                             signal("mwa_error", MWAErrorCodes.WALLET_NOT_INSTALLED, "No MWA wallet found on device.")
-                        }
-                        is TransactionResult.Failure -> {
-                            Log.d(TAG, "authorize: FAILURE e=${result.e}")
+                        is TransactionResult.Failure ->
                             signal("mwa_error", mapErrorCode(result.e), result.e.message ?: "Authorization failed")
-                        }
                     }
                 }
             } catch (e: TimeoutCancellationException) {
-                Log.d(TAG, "authorize: TIMEOUT")
                 signal("mwa_error", MWAErrorCodes.NETWORK_TIMEOUT, "Timed out after 60s.")
             } catch (e: Exception) {
-                Log.d(TAG, "authorize: EXCEPTION e=$e")
                 signal("mwa_error", mapErrorCode(e), e.message ?: "Unknown error")
             } finally {
                 isSessionActive.set(false)
@@ -99,13 +94,8 @@ class MWABridge(
             try {
                 withTimeout(SESSION_TIMEOUT_MS) {
                     val adapter = buildAdapter(name, uri, icon)
-                    val result  = adapter.transact(sender) {
-                        reauthorize(
-                            identityUri  = android.net.Uri.parse(uri),
-                            iconUri      = android.net.Uri.parse(icon),
-                            identityName = name,
-                            authToken    = authToken
-                        )
+                    val result  = adapter.transact(sender) { _ ->
+                        reauthorize(android.net.Uri.parse(uri), android.net.Uri.parse(icon), name, authToken)
                     }
                     when (result) {
                         is TransactionResult.Success -> {
@@ -134,9 +124,7 @@ class MWABridge(
         scope.launch {
             try {
                 val adapter = buildAdapter("InvokeQuest", "https://invokequest.dev", "favicon.ico")
-                adapter.transact(sender) {
-                    deauthorize(authToken = authToken)
-                }
+                adapter.transact(sender) { _ -> deauthorize(authToken) }
                 cache.clear(activeWalletPackage)
                 signal("deauthorized")
             } catch (e: Exception) {
@@ -155,9 +143,7 @@ class MWABridge(
                 withTimeout(SESSION_TIMEOUT_MS) {
                     val txBytes = transactionsB64.map { Base64.decode(it, Base64.DEFAULT) }.toTypedArray()
                     val adapter = buildAdapter("InvokeQuest", "https://invokequest.dev", "favicon.ico")
-                    val result  = adapter.transact(sender) {
-                        signTransactions(transactions = txBytes)
-                    }
+                    val result  = adapter.transact(sender) { _ -> signTransactions(txBytes) }
                     when (result) {
                         is TransactionResult.Success -> {
                             val sigs = result.successPayload?.signedPayloads
@@ -189,9 +175,7 @@ class MWABridge(
                 withTimeout(SESSION_TIMEOUT_MS) {
                     val txBytes = transactionsB64.map { Base64.decode(it, Base64.DEFAULT) }.toTypedArray()
                     val adapter = buildAdapter("InvokeQuest", "https://invokequest.dev", "favicon.ico")
-                    val result  = adapter.transact(sender) {
-                        signAndSendTransactions(transactions = txBytes)
-                    }
+                    val result  = adapter.transact(sender) { _ -> signAndSendTransactions(txBytes) }
                     when (result) {
                         is TransactionResult.Success -> {
                             val sigs = result.successPayload?.signatures
@@ -224,9 +208,7 @@ class MWABridge(
                     val messages  = messagesB64.map { Base64.decode(it, Base64.DEFAULT) }.toTypedArray()
                     val addresses = addressesB64.map { Base64.decode(it, Base64.DEFAULT) }.toTypedArray()
                     val adapter   = buildAdapter("InvokeQuest", "https://invokequest.dev", "favicon.ico")
-                    val result    = adapter.transact(sender) {
-                        signMessagesDetached(messages = messages, addresses = addresses)
-                    }
+                    val result    = adapter.transact(sender) { _ -> signMessagesDetached(messages, addresses) }
                     when (result) {
                         is TransactionResult.Success -> {
                             val signed = result.successPayload?.messages
@@ -253,9 +235,7 @@ class MWABridge(
         scope.launch {
             try {
                 val adapter = buildAdapter("InvokeQuest", "https://invokequest.dev", "favicon.ico")
-                val result  = adapter.transact(sender) {
-                    getCapabilities()
-                }
+                val result  = adapter.transact(sender) { _ -> getCapabilities() }
                 when (result) {
                     is TransactionResult.Success -> {
                         val json = gson.toJson(mapOf(
@@ -306,3 +286,9 @@ class MWABridge(
 
     fun destroy() { scope.cancel() }
 }
+'''
+
+with open(path, "w", encoding="utf-8") as f:
+    f.write(content)
+
+print("MWABridge.kt written successfully")

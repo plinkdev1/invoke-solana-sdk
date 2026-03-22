@@ -1,0 +1,273 @@
+content = """[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scenes/screens/WalletPicker.gd" id="1"]
+[ext_resource type="Shader" path="res://shaders/aurora_background.gdshader" id="2"]
+[ext_resource type="Texture2D" path="res://assets/icons/wallets/wallet_phantom.png" id="4"]
+[ext_resource type="Texture2D" path="res://assets/icons/wallets/wallet_backpack.png" id="5"]
+[ext_resource type="Texture2D" path="res://assets/icons/wallets/wallet_solflare.png" id="6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_aurora"]
+shader = ExtResource("2")
+shader_parameter/time_scale = 0.0
+shader_parameter/color_a = Color(0.6, 0.271, 1, 0.08)
+shader_parameter/color_b = Color(0.078, 0.945, 0.596, 0.04)
+shader_parameter/bg_color = Color(0.031, 0.039, 0.055, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(1, 1, 1, 0.05)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+corner_detail = 10
+anti_aliasing = true
+anti_aliasing_size = 1.0
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.10)
+
+[node name="WalletPicker" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="BgColor" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.031, 0.039, 0.055, 1)
+
+[node name="Aurora" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+material = SubResource("ShaderMaterial_aurora")
+color = Color(1, 1, 1, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 20
+offset_left = 40.0
+offset_right = -40.0
+offset_top = 100.0
+
+[node name="TitleLabel" type="Label" parent="Scroll/VBox"]
+layout_mode = 2
+text = "Connect Your Wallet"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 28
+
+[node name="SubLabel" type="Label" parent="Scroll/VBox"]
+layout_mode = 2
+text = "Choose a wallet to get started"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 1, 0.5)
+theme_override_font_sizes/font_size = 14
+
+[node name="Spacer" type="Control" parent="Scroll/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 8)
+
+[node name="CardPhantom" type="PanelContainer" parent="Scroll/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 96)
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="BtnPhantom" type="Button" parent="Scroll/VBox/CardPhantom"]
+layout_mode = 2
+flat = true
+[connection signal="pressed" from="Scroll/VBox/CardPhantom/BtnPhantom" to="." method="_on_card_pressed" binds=[0]]
+
+[node name="Row" type="HBoxContainer" parent="Scroll/VBox/CardPhantom/BtnPhantom"]
+layout_mode = 2
+theme_override_constants/separation = 20
+offset_left = 20.0
+offset_right = -20.0
+offset_top = 16.0
+offset_bottom = -16.0
+
+[node name="Icon" type="TextureRect" parent="Scroll/VBox/CardPhantom/BtnPhantom/Row"]
+layout_mode = 2
+custom_minimum_size = Vector2(60, 60)
+size_flags_vertical = 4
+texture = ExtResource("4")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TextVBox" type="VBoxContainer" parent="Scroll/VBox/CardPhantom/BtnPhantom/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 4
+
+[node name="Name" type="Label" parent="Scroll/VBox/CardPhantom/BtnPhantom/Row/TextVBox"]
+layout_mode = 2
+text = "Phantom"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 18
+
+[node name="Sub" type="Label" parent="Scroll/VBox/CardPhantom/BtnPhantom/Row/TextVBox"]
+layout_mode = 2
+text = "Most Popular"
+theme_override_colors/font_color = Color(1, 1, 1, 0.45)
+theme_override_font_sizes/font_size = 13
+
+[node name="Arrow" type="Label" parent="Scroll/VBox/CardPhantom/BtnPhantom/Row"]
+layout_mode = 2
+size_flags_vertical = 4
+text = "›"
+theme_override_colors/font_color = Color(0.6, 0.271, 1, 1)
+theme_override_font_sizes/font_size = 32
+
+[node name="CardBackpack" type="PanelContainer" parent="Scroll/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 96)
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="BtnBackpack" type="Button" parent="Scroll/VBox/CardBackpack"]
+layout_mode = 2
+flat = true
+[connection signal="pressed" from="Scroll/VBox/CardBackpack/BtnBackpack" to="." method="_on_card_pressed" binds=[1]]
+
+[node name="Row" type="HBoxContainer" parent="Scroll/VBox/CardBackpack/BtnBackpack"]
+layout_mode = 2
+theme_override_constants/separation = 20
+offset_left = 20.0
+offset_right = -20.0
+offset_top = 16.0
+offset_bottom = -16.0
+
+[node name="Icon" type="TextureRect" parent="Scroll/VBox/CardBackpack/BtnBackpack/Row"]
+layout_mode = 2
+custom_minimum_size = Vector2(60, 60)
+size_flags_vertical = 4
+texture = ExtResource("5")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TextVBox" type="VBoxContainer" parent="Scroll/VBox/CardBackpack/BtnBackpack/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 4
+
+[node name="Name" type="Label" parent="Scroll/VBox/CardBackpack/BtnBackpack/Row/TextVBox"]
+layout_mode = 2
+text = "Backpack"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 18
+
+[node name="Sub" type="Label" parent="Scroll/VBox/CardBackpack/BtnBackpack/Row/TextVBox"]
+layout_mode = 2
+text = "xNFT Wallet"
+theme_override_colors/font_color = Color(1, 1, 1, 0.45)
+theme_override_font_sizes/font_size = 13
+
+[node name="Arrow" type="Label" parent="Scroll/VBox/CardBackpack/BtnBackpack/Row"]
+layout_mode = 2
+size_flags_vertical = 4
+text = "›"
+theme_override_colors/font_color = Color(0.6, 0.271, 1, 1)
+theme_override_font_sizes/font_size = 32
+
+[node name="CardSolflare" type="PanelContainer" parent="Scroll/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 96)
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="BtnSolflare" type="Button" parent="Scroll/VBox/CardSolflare"]
+layout_mode = 2
+flat = true
+[connection signal="pressed" from="Scroll/VBox/CardSolflare/BtnSolflare" to="." method="_on_card_pressed" binds=[2]]
+
+[node name="Row" type="HBoxContainer" parent="Scroll/VBox/CardSolflare/BtnSolflare"]
+layout_mode = 2
+theme_override_constants/separation = 20
+offset_left = 20.0
+offset_right = -20.0
+offset_top = 16.0
+offset_bottom = -16.0
+
+[node name="Icon" type="TextureRect" parent="Scroll/VBox/CardSolflare/BtnSolflare/Row"]
+layout_mode = 2
+custom_minimum_size = Vector2(60, 60)
+size_flags_vertical = 4
+texture = ExtResource("6")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TextVBox" type="VBoxContainer" parent="Scroll/VBox/CardSolflare/BtnSolflare/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 4
+
+[node name="Name" type="Label" parent="Scroll/VBox/CardSolflare/BtnSolflare/Row/TextVBox"]
+layout_mode = 2
+text = "Solflare"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 18
+
+[node name="Sub" type="Label" parent="Scroll/VBox/CardSolflare/BtnSolflare/Row/TextVBox"]
+layout_mode = 2
+text = "DeFi Focused"
+theme_override_colors/font_color = Color(1, 1, 1, 0.45)
+theme_override_font_sizes/font_size = 13
+
+[node name="Arrow" type="Label" parent="Scroll/VBox/CardSolflare/BtnSolflare/Row"]
+layout_mode = 2
+size_flags_vertical = 4
+text = "›"
+theme_override_colors/font_color = Color(0.6, 0.271, 1, 1)
+theme_override_font_sizes/font_size = 32
+
+[node name="LoadingOverlay" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+visible = false
+
+[node name="OverlayBg" type="ColorRect" parent="LoadingOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.031, 0.039, 0.055, 0.85)
+
+[node name="StatusLabel" type="Label" parent="LoadingOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Waiting for wallet..."
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 1, 0.9)
+theme_override_font_sizes/font_size = 16
+"""
+
+with open(r'C:\PROJECTS\Invoke_Solana_App\example\invokequest\scenes\screens\WalletPicker.tscn', 'w', encoding='utf-8', newline='\n') as f:
+    f.write(content)
+print('WalletPicker.tscn written - direct TextureRect, no IconBox wrapper.')

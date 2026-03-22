@@ -32,6 +32,13 @@ configurations {
 
 dependencies {
     implementation "androidx.fragment:fragment:$versions.fragmentVersion"
+    implementation "androidx.fragment:fragment-ktx:1.6.2"
+    implementation "androidx.activity:activity-ktx:1.8.2"
+    implementation "io.github.funkatronics:multimult:0.2.3"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
+    implementation "androidx.security:security-crypto:1.1.0-alpha06"
+    implementation "com.solanamobile:mobile-wallet-adapter-clientlib-ktx:2.0.3"
+    implementation "com.google.code.gson:gson:2.10.1"
 
     if (rootProject.findProject(":lib")) {
         implementation project(":lib")

@@ -15,7 +15,21 @@
         android:glEsVersion="0x00030000"
         android:required="true" />
 
-            <meta-data android:name="org.godotengine.plugin.v2.InvokeMWA" android:value="com.invoke.mwa.MWAPlugin" />
+    <!--
+        Android 11+ (API 30+) package visibility.
+        Without this, PackageManager.queryIntentActivities() returns empty
+        for wallet apps even when they are installed, so getInstalledWallets()
+        returns [] and the MWA association intent cannot find a target.
+    -->
+    <queries>
+        <intent>
+            <action android:name="com.solana.mobilewalletadapter.walletlib.scenario.ACTION_HELLO"/>
+        </intent>
+        <package android:name="app.phantom"/>
+        <package android:name="com.backpack.wallet"/>
+        <package android:name="com.solflare.mobile"/>
+    </queries>
+
     <application
         android:label="@string/godot_project_name_string"
         android:allowBackup="false"
@@ -25,6 +39,17 @@
         android:hasFragileUserData="false"
         android:requestLegacyExternalStorage="false"
         tools:ignore="GoogleAppIndexingWarning" >
+
+        <!--
+            INVOKE MWA Plugin registration.
+            MUST be inside <application> — Godot reads applicationInfo.metaData
+            which only picks up meta-data that is a child of <application>.
+            Placing this tag outside <application> (at manifest level) means
+            Engine.has_singleton("InvokeMWA") always returns false.
+        -->
+        <meta-data
+            android:name="org.godotengine.plugin.v2.InvokeMWA"
+            android:value="com.invoke.mwa.MWAPlugin" />
 
         <!-- Records the version of the Godot editor used for building -->
         <meta-data
@@ -53,5 +78,3 @@
     </application>
 
 </manifest>
-
-

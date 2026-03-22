@@ -1,4 +1,6 @@
-package com.invoke.mwa
+path = r"C:\PROJECTS\Invoke_Solana_App\android\plugin\src\main\kotlin\com\invoke\mwa\MWABridge.kt"
+
+content = '''package com.invoke.mwa
 
 import android.util.Base64
 import android.util.Log
@@ -34,7 +36,7 @@ class MWABridge(
         return MobileWalletAdapter(
             connectionIdentity = ConnectionIdentity(
                 identityUri  = android.net.Uri.parse(uri),
-                iconUri      = android.net.Uri.parse("favicon.ico"),
+                iconUri      = android.net.Uri.parse(icon),
                 identityName = name
             )
         )
@@ -48,41 +50,31 @@ class MWABridge(
         scope.launch {
             try {
                 withTimeout(SESSION_TIMEOUT_MS) {
-                    Log.d(TAG, "authorize: building adapter name=$name uri=$uri")
                     val adapter = buildAdapter(name, uri, icon)
-                    Log.d(TAG, "authorize: calling transact")
                     val result = adapter.transact(sender) {
-                        Log.d(TAG, "authorize: inside transact lambda, calling authorize()")
                         authorize(
                             identityUri  = android.net.Uri.parse(uri),
-                            iconUri      = android.net.Uri.parse("favicon.ico"),
-                            identityName = name
+                            iconUri      = android.net.Uri.parse(icon),
+                            identityName = name,
+                            cluster      = null
                         )
                     }
-                    Log.d(TAG, "authorize: transact returned result=$result")
                     when (result) {
                         is TransactionResult.Success -> {
-                            Log.d(TAG, "authorize: SUCCESS")
                             val auth       = result.authResult
                             val addressB58 = Base58.encodeToString(auth.accounts.first().publicKey)
                             cache.save(activeWalletPackage, auth.authToken, addressB58)
                             signal("authorized", auth.authToken, addressB58)
                         }
-                        is TransactionResult.NoWalletFound -> {
-                            Log.d(TAG, "authorize: NO WALLET FOUND")
+                        is TransactionResult.NoWalletFound ->
                             signal("mwa_error", MWAErrorCodes.WALLET_NOT_INSTALLED, "No MWA wallet found on device.")
-                        }
-                        is TransactionResult.Failure -> {
-                            Log.d(TAG, "authorize: FAILURE e=${result.e}")
+                        is TransactionResult.Failure ->
                             signal("mwa_error", mapErrorCode(result.e), result.e.message ?: "Authorization failed")
-                        }
                     }
                 }
             } catch (e: TimeoutCancellationException) {
-                Log.d(TAG, "authorize: TIMEOUT")
                 signal("mwa_error", MWAErrorCodes.NETWORK_TIMEOUT, "Timed out after 60s.")
             } catch (e: Exception) {
-                Log.d(TAG, "authorize: EXCEPTION e=$e")
                 signal("mwa_error", mapErrorCode(e), e.message ?: "Unknown error")
             } finally {
                 isSessionActive.set(false)
@@ -306,3 +298,9 @@ class MWABridge(
 
     fun destroy() { scope.cancel() }
 }
+'''
+
+with open(path, "w", encoding="utf-8") as f:
+    f.write(content)
+
+print("MWABridge.kt rewritten with correct MWA 2.0.3 transact calls")
