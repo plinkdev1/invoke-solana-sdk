@@ -1,4 +1,4 @@
-# AuthResult.gd
+﻿# AuthResult.gd
 extends Control
 
 @onready var wallet_label:  Label          = $Center/VBox/Card/CardVBox/WalletLabel

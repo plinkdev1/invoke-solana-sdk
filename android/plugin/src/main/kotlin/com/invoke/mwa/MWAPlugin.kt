@@ -26,14 +26,14 @@ class MWAPlugin(godot: Godot) : GodotPlugin(godot) {
         SignalInfo("message_signed",        Array<String>::class.java),
         SignalInfo("capabilities_received", String::class.java),
         SignalInfo("wallet_apps_detected",  String::class.java),
-        SignalInfo("mwa_error",             Int::class.java, String::class.java)
+        SignalInfo("mwa_error",             Integer::class.javaObjectType, String::class.java)
     )
 
     override fun onMainCreate(activity: android.app.Activity): android.view.View? {
         Log.d(TAG, "MWAPlugin onMainCreate")
         val fragmentActivity = activity as? ComponentActivity
         if (fragmentActivity == null) {
-            Log.e(TAG, "Activity is not a FragmentActivity — bridge not initialized")
+            Log.e(TAG, "Activity is not a FragmentActivity ï¿½ bridge not initialized")
             return null
         }
         bridge = MWABridge(

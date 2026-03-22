@@ -1,4 +1,4 @@
-# SignTransaction.gd
+﻿# SignTransaction.gd
 extends Control
 
 @onready var status_label: Label          = $Scroll/VBox/StatusCard/CardVBox/StatusLabel

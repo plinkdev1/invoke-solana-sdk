@@ -1,4 +1,4 @@
-# Settings.gd
+﻿# Settings.gd
 extends Control
 
 const CONFIG_PATH := "user://invokequest_settings.cfg"

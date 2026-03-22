@@ -1,0 +1,9 @@
+[config]
+name="InvokeMWA"
+binary_type="local"
+binary="res://addons/mobile_wallet_adapter/android/InvokeMWA.aar"
+
+[dependencies]
+local=["res://addons/mobile_wallet_adapter/android/InvokeMWA.aar"]
+remote=[]
+custom_maven_repos=[]

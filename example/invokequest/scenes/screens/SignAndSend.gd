@@ -1,4 +1,4 @@
-# SignAndSend.gd
+﻿# SignAndSend.gd
 extends Control
 
 const SOLSCAN_BASE := "https://solscan.io/tx/%s?cluster=devnet"

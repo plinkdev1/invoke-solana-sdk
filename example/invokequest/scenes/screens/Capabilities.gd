@@ -1,4 +1,4 @@
-# Capabilities.gd
+﻿# Capabilities.gd
 extends Control
 
 @onready var status_label:   Label          = $Scroll/VBox/StatusLabel
@@ -43,8 +43,8 @@ func _on_capabilities_received(json_str: String) -> void:
 	var caps: Dictionary = parsed
 	clone_label.text    = _bool_str(caps.get("supports_clone_authorization", false))
 	signsend_label.text = _bool_str(caps.get("supports_sign_and_send_transactions", false))
-	max_tx_label.text   = str(caps.get("max_transactions_per_request", "—"))
-	max_msg_label.text  = str(caps.get("max_messages_per_request", "—"))
+	max_tx_label.text   = str(caps.get("max_transactions_per_request", "â€”"))
+	max_msg_label.text  = str(caps.get("max_messages_per_request", "â€”"))
 	_color_bool(clone_label,    caps.get("supports_clone_authorization", false))
 	_color_bool(signsend_label, caps.get("supports_sign_and_send_transactions", false))
 	result_card.visible = true
