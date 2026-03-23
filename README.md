@@ -1,9 +1,6 @@
 <div align="center">
 
-<img src="docs/static/img/invoke-logo-mark.png" width="48" align="left" style="margin-right:12px" />
-<img src="docs/static/img/invoke-logo-text.png" height="64" />
-
-<br clear="both" />
+<img src="docs/static/img/invoke-banner.png" width="100%" />
 
 **Solana Mobile Wallet Adapter 2.0.3 plugin for Godot 4 on Android**
 
