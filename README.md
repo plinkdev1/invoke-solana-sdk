@@ -4,7 +4,7 @@
 
 **Solana Mobile Wallet Adapter 2.0.3 plugin for Godot 4 on Android**
 
-https://github.com/plinkdev1/invoke-solana-sdk/raw/main/docs/static/img/invoke-demo.mp4
+
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 [![Godot 4.2](https://img.shields.io/badge/Godot-4.2.2-blue)](https://godotengine.org)
@@ -25,6 +25,14 @@ Godot 4 has no native Solana integration. If you want your Android game or app t
 **Invoke SDK** is a drop-in Android plugin for Godot 4 that exposes the full [Solana Mobile Wallet Adapter 2.0.3](https://github.com/solana-mobile/mobile-wallet-adapter) API to GDScript via signals and method calls. It handles everything in Kotlin — auth tokens, session caching, transaction building, RPC calls — so your GDScript stays clean.
 
 > **One `.aar` file. One signal interface. Full MWA 2.0.3 coverage.**
+
+---
+
+## Demo
+
+[![Invoke SDK Demo — Watch on YouTube](https://img.youtube.com/vi/VjgNYFSCxek/maxresdefault.jpg)](https://youtube.com/shorts/VjgNYFSCxek)
+
+*▶ Watch the full demo on YouTube*
 
 ---
 
