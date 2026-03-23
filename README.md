@@ -4,6 +4,8 @@
 
 **Solana Mobile Wallet Adapter 2.0.3 plugin for Godot 4 on Android**
 
+https://github.com/plinkdev1/invoke-solana-sdk/raw/main/docs/static/img/invoke-demo.mp4
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 [![Godot 4.2](https://img.shields.io/badge/Godot-4.2.2-blue)](https://godotengine.org)
 [![MWA 2.0.3](https://img.shields.io/badge/MWA-2.0.3-9945FF)](https://github.com/solana-mobile/mobile-wallet-adapter)
@@ -249,6 +251,12 @@ Auth tokens are stored in `EncryptedSharedPreferences` (AES256-GCM key + AES256-
 
 ---
 
+## Example App — InvokeQuest
+
+The repo includes **InvokeQuest**, a full example Android app that demonstrates every SDK method. Find it at `example/invokequest/`. It is a complete Godot 4 project with all screens, autoloads, and the compiled plugin — ready to build and run on any Android device.
+
+---
+
 ## Project Structure
 
 ```
@@ -279,6 +287,7 @@ invoke-solana-sdk/
 - **Backpack** — MWA 2.0 incompatible, not supported
 - **Phantom** — Rejects unverified dApp domains (register at [developer.phantom.app](https://developer.phantom.app))
 - **Silent reconnect** — Only within 30-minute window; stale sessions trigger wallet picker
+- **Solscan devnet** — Solscan dropped devnet support; transaction links only work on Testnet and Mainnet
 - **Wallet picker on every sign** — MWA protocol requirement, not a bug
 
 ---
@@ -320,6 +329,12 @@ cd ..\example\invokequest\android\build
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full build pipeline, signing setup, and scene asset workflow.
+
+---
+
+## Trademark Notice
+
+Solana, the Solana logo, Phantom, Solflare, Jupiter, Backpack, and Godot Engine are trademarks or registered trademarks of their respective owners. This project is an independent open-source SDK and is not affiliated with, endorsed by, or sponsored by Solana Foundation, Phantom, Solflare, Jupiter, or the Godot Engine project.
 
 ---
 
