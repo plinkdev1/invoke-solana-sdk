@@ -167,6 +167,8 @@ _mwa.signMemoMessage("Hello Solana")
 #### `getCapabilities()`
 Queries the connected wallet for supported MWA features. Emits `capabilities_received`.
 
+> **Clone Authorization note:** `supports_clone_authorization` is in the MWA 2.0.3 spec and the SDK queries it correctly. Current wallets (Solflare, Jupiter) return `false` — this is expected, not a bug. It will work automatically when wallets ship support. Use cases: multi-device gaming, game + companion app sharing one wallet session.
+
 #### `getInstalledWallets()`
 Detects MWA-compatible wallet apps installed on the device. Emits `wallet_apps_detected`.
 
