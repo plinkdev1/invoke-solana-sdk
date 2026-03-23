@@ -83,3 +83,31 @@ _mwa.cacheClearAll()
 - Never log auth tokens — not even partial characters
 - Cache is app-private — inaccessible to other apps
 - On `AUTH_TOKEN_INVALID` (code 1004): call `cacheClear()` then `authorize()` again
+
+## Storage Backends
+
+Invoke SDK supports three storage backends for the auth token cache. The backend is configurable — useful for development, testing, and production scenarios.
+
+| Backend | Persistence | Security | Use Case |
+|---------|-------------|----------|----------|
+| **Keystore** | ✅ Persists across launches | Hardware-backed (TEE) | Production — recommended for all shipped apps |
+| **File** | ✅ Persists across launches | Software encryption | Testing on emulators or devices without full Keystore support |
+| **Memory** | ❌ Cleared on app close | In-memory only | Development — forces full re-auth on every launch for flow testing |
+
+### Keystore
+Uses Android's hardware-backed Keystore system (TEE — Trusted Execution Environment). The encryption key lives in secure hardware and cannot be extracted, even with root access. This is the default and recommended backend for production.
+
+### File
+Stores the encrypted token as a file in the app's private storage directory. The token is still encrypted, but the key is stored in software rather than hardware. Useful for emulators and older devices that lack full Keystore support.
+
+### Memory
+Stores the token in RAM only. The token is lost when the app closes, forcing a full `authorize()` on every launch. Ideal during development when you want to repeatedly test the full wallet connection flow without manually clearing cached tokens.
+
+### Switching Backends (GDScript)
+
+```gdscript
+# Set before calling authorize() or tryReauthorizeFromCache()
+_mwa.setCacheBackend("keystore")  # "keystore" | "file" | "memory"
+```
+
+> **Note:** Switching backends at runtime clears the existing cache. Always set your backend once at startup before any auth calls.

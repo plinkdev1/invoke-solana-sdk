@@ -18,6 +18,22 @@
 
 ---
 
+## Auth Token Cache
+
+Invoke SDK includes an encrypted auth token cache so users only see the wallet approval popup on first launch. Subsequent launches reconnect silently.
+
+Three storage backends are available:
+
+| Backend | Best For |
+|---------|----------|
+| `keystore` | Production — hardware-backed encryption via Android TEE |
+| `file` | Emulators / devices without full Keystore support |
+| `memory` | Development — clears on every app close, forces full re-auth |
+
+📚 [Full Auth Cache documentation →](https://invoke-sdk.netlify.app/docs/auth-cache)
+
+---
+
 ## What Is This?
 
 Godot 4 has no native Solana integration. If you want your Android game or app to connect to Phantom, Solflare, or Jupiter, you're on your own — until now.
