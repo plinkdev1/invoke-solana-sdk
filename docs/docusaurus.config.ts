@@ -7,7 +7,7 @@ const config: Config = {
   tagline: 'Solana Mobile Wallet Adapter for Godot Engine',
   favicon: 'img/favicon.ico',
 
-  url: 'https://invoke-sdk.dev',
+  url: 'https://invoke-sdk.netlify.app',
   baseUrl: '/',
 
   organizationName: 'plinkdev1',
@@ -92,7 +92,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: 'Copyright © 2026 Francisco Costa. Built with Docusaurus.',
+      copyright: 'Copyright ï¿½ 2026 Francisco Costa. Built with Docusaurus.',
     },
     prism: {
       theme: prismThemes.dracula,
