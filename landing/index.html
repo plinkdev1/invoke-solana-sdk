@@ -158,7 +158,8 @@
         <div class="w-full flex flex-col items-center text-center mb-24">
             <h2 class="font-display font-bold text-3xl md:text-4xl text-white mb-3 tracking-tight">See It In Action</h2>
             <p class="text-gray-500 text-sm mb-8 font-mono">Samsung Galaxy · Android 14 · Solflare + Jupiter</p>
-            <a href="https://youtube.com/shorts/VjgNYFSCxek" target="_blank" class="group relative rounded-2xl overflow-hidden border border-white/10 hover:border-[#9945FF]/40 transition-all duration-300 hover:shadow-[0_8px_40px_-12px_rgba(153,69,255,0.4)] max-w-xs w-full">
+            <!-- play button trigger -->
+            <button onclick="document.getElementById('videoModal').classList.remove('hidden')" class="group relative rounded-2xl overflow-hidden border border-white/10 hover:border-[#9945FF]/40 transition-all duration-300 hover:shadow-[0_8px_40px_-12px_rgba(153,69,255,0.4)] max-w-xs w-full focus:outline-none">
                 <div class="absolute inset-0 flex items-center justify-center z-10">
                     <div class="w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background:#14F195">
                         <svg class="w-6 h-6 ml-1" style="color:#080A0E" fill="currentColor" viewBox="0 0 24 24">
@@ -166,8 +167,18 @@
                         </svg>
                     </div>
                 </div>
-                <img src="https://img.youtube.com/vi/VjgNYFSCxek/maxresdefault.jpg" alt="Invoke SDK Demo" class="w-full opacity-50 group-hover:opacity-70 transition-opacity duration-300">
-            </a>
+                <video src="./demo.mp4" muted playsinline preload="metadata" class="w-full opacity-50 group-hover:opacity-70 transition-opacity duration-300" style="pointer-events:none;"></video>
+            </button>
+        </div>
+
+        <!-- Video modal -->
+        <div id="videoModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(0,0,0,0.85);" onclick="if(event.target===this){this.classList.add('hidden');this.querySelector('video').pause();}">
+            <div class="relative w-full max-w-sm rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_80px_rgba(153,69,255,0.3)]">
+                <button onclick="document.getElementById('videoModal').classList.add('hidden');document.getElementById('modalVideo').pause();" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors" style="background:rgba(0,0,0,0.6);">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+                <video id="modalVideo" src="./demo.mp4" controls autoplay playsinline class="w-full" style="max-height:80vh;background:#000;"></video>
+            </div>
         </div>
 
         <!-- Screenshots -->
@@ -257,6 +268,11 @@
                 <a href="https://invoke-sdk.netlify.app" class="text-gray-600 hover:text-white text-xs transition-colors">Docs</a>
                 <a href="https://youtube.com/shorts/VjgNYFSCxek" target="_blank" class="text-gray-600 hover:text-white text-xs transition-colors">Demo</a>
             </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-6 mt-6 pt-6 border-t border-white/[0.04]">
+            <p class="text-gray-700 text-xs text-center leading-relaxed">
+                All product names, logos, and brands displayed on this site are property of their respective owners. Solana, Phantom, Solflare, Jupiter, Backpack, Solana Mobile, Godot, Unity, and Unreal Engine are trademarks of their respective companies. INVOKE SDK is an independent open-source project and is not affiliated with or endorsed by any of the above entities.
+            </p>
         </div>
     </footer>
 
