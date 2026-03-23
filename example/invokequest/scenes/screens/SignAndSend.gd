@@ -77,7 +77,7 @@ func _get_solscan_url(sig: String) -> String:
 	config.load(CONFIG_PATH)
 	var idx: int = config.get_value("settings", "network", 0)
 	idx = clamp(idx, 0, 2)
-	var cluster := ["devnet", "testnet", ""][idx]
+	var cluster: String = ["devnet", "testnet", ""][idx]
 	if cluster == "":
 		return "https://solscan.io/tx/%s" % sig
 	return "https://solscan.io/tx/%s?cluster=%s" % [sig, cluster]

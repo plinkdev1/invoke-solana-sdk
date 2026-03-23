@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=6 format=3 uid="uid://cy1fu5ywqsgbg"]
 
 [ext_resource type="Script" path="res://scenes/screens/AuthResult.gd" id="1"]
 [ext_resource type="Shader" path="res://shaders/aurora_background.gdshader" id="2"]
@@ -15,7 +15,7 @@ shader_parameter/bg_color = Color(0.031, 0.039, 0.055, 1)
 shader = ExtResource("3")
 shader_parameter/blur_strength = 3.0
 shader_parameter/tint_color = Color(1, 1, 1, 0.06)
-shader_parameter/border_alpha = 0.10
+shader_parameter/border_alpha = 0.1
 shader_parameter/border_width = 0.008
 shader_parameter/border_color = Color(1, 1, 1, 1)
 
@@ -33,74 +33,75 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0.031, 0.039, 0.055, 1)
 
 [node name="Aurora" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_aurora")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-material = SubResource("ShaderMaterial_aurora")
-color = Color(1, 1, 1, 1)
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="VBox" type="VBoxContainer" parent="Center"]
-layout_mode = 2
 custom_minimum_size = Vector2(800, 0)
+layout_mode = 2
 theme_override_constants/separation = 24
 
 [node name="TitleLabel" type="Label" parent="Center/VBox"]
 layout_mode = 2
-text = "Wallet Connected"
-horizontal_alignment = 1
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 28
+text = "Wallet Connected"
+horizontal_alignment = 1
 
 [node name="Card" type="PanelContainer" parent="Center/VBox"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 160)
 material = SubResource("ShaderMaterial_glass")
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
 
 [node name="CardVBox" type="VBoxContainer" parent="Center/VBox/Card"]
 layout_mode = 2
 theme_override_constants/separation = 16
-offset_left = 32.0
-offset_right = -32.0
-offset_top = 24.0
-offset_bottom = -24.0
 
 [node name="WalletLabel" type="Label" parent="Center/VBox/Card/CardVBox"]
 layout_mode = 2
-text = "Connected"
-horizontal_alignment = 1
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
 theme_override_font_sizes/font_size = 14
+text = "Connected"
+horizontal_alignment = 1
 
 [node name="AddressLabel" type="Label" parent="Center/VBox/Card/CardVBox"]
 layout_mode = 2
-text = "AbCd...XyZ1"
-horizontal_alignment = 1
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 22
+text = "AbCd...XyZ1"
+horizontal_alignment = 1
 
 [node name="CacheLabel" type="Label" parent="Center/VBox/Card/CardVBox"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 13
 text = "New session"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 13
 
 [node name="ContinueBtn" type="Button" parent="Center/VBox"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 72)
-pivot_offset = Vector2(400, 36)
-text = "Continue to Dashboard"
+layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 18
-[connection signal="pressed" from="Center/VBox/ContinueBtn" to="." method="_on_continue_pressed"]
+text = "Continue to Dashboard"
+
 [connection signal="button_down" from="Center/VBox/ContinueBtn" to="." method="_on_continue_btn_button_down"]
 [connection signal="button_up" from="Center/VBox/ContinueBtn" to="." method="_on_continue_btn_button_up"]
+[connection signal="pressed" from="Center/VBox/ContinueBtn" to="." method="_on_continue_pressed"]
