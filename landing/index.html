@@ -29,6 +29,10 @@
         .glass { background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); }
         .screenshot-scroll { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
         .screenshot-item { scroll-snap-align: start; }
+        @keyframes marquee {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
     </style>
 </head>
 <body class="bg-[#080A0E] text-white font-sans min-h-screen flex flex-col relative overflow-x-hidden selection:bg-[#14F195] selection:text-black">
@@ -79,6 +83,43 @@
                     </svg>
                     View on GitHub
                 </a>
+            </div>
+        </div>
+
+        <!-- Logo carousel -->
+        <div class="w-full mb-24 overflow-hidden">
+            <p class="text-center text-xs text-gray-600 font-mono tracking-[0.2em] uppercase mb-8">Built for the Solana ecosystem</p>
+            <div class="relative">
+                <!-- fade edges -->
+                <div class="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style="background:linear-gradient(to right,#080A0E,transparent);"></div>
+                <div class="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style="background:linear-gradient(to left,#080A0E,transparent);"></div>
+                <!-- track -->
+                <div class="flex" style="animation: marquee 28s linear infinite; width: max-content;">
+                    <!-- set 1 -->
+                    <div class="flex items-center gap-10 px-5">
+                        <img src="./logos/solana.png"      alt="Solana"       class="h-8 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain" style="filter:brightness(0) invert(1);">
+                        <img src="./logos/solanamobile.png" alt="Solana Mobile" class="h-8 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain" style="filter:brightness(0) invert(1);">
+                        <img src="./logos/phantom.png"     alt="Phantom"      class="h-10 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain">
+                        <img src="./logos/solflare.png"    alt="Solflare"     class="h-10 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain">
+                        <img src="./logos/jupiter.png"     alt="Jupiter"      class="h-10 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain">
+                        <img src="./logos/backpack.png"    alt="Backpack"     class="h-10 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain">
+                        <img src="./logos/godot.png"       alt="Godot"        class="h-10 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain" style="filter:brightness(0) invert(1);">
+                        <img src="./logos/unity.png"       alt="Unity"        class="h-8 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain">
+                        <img src="./logos/unreal.png"      alt="Unreal Engine" class="h-10 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain">
+                    </div>
+                    <!-- set 2 (duplicate for seamless loop) -->
+                    <div class="flex items-center gap-10 px-5">
+                        <img src="./logos/solana.png"      alt="Solana"       class="h-8 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain" style="filter:brightness(0) invert(1);">
+                        <img src="./logos/solanamobile.png" alt="Solana Mobile" class="h-8 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain" style="filter:brightness(0) invert(1);">
+                        <img src="./logos/phantom.png"     alt="Phantom"      class="h-10 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain">
+                        <img src="./logos/solflare.png"    alt="Solflare"     class="h-10 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain">
+                        <img src="./logos/jupiter.png"     alt="Jupiter"      class="h-10 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain">
+                        <img src="./logos/backpack.png"    alt="Backpack"     class="h-10 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain">
+                        <img src="./logos/godot.png"       alt="Godot"        class="h-10 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain" style="filter:brightness(0) invert(1);">
+                        <img src="./logos/unity.png"       alt="Unity"        class="h-8 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain">
+                        <img src="./logos/unreal.png"      alt="Unreal Engine" class="h-10 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300 object-contain">
+                    </div>
+                </div>
             </div>
         </div>
 
