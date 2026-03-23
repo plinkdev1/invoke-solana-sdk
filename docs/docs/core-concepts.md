@@ -1,4 +1,4 @@
-﻿---
+---
 sidebar_position: 2
 title: Core Concepts
 description: Understand how Mobile Wallet Adapter works with Godot Engine.
@@ -8,98 +8,69 @@ description: Understand how Mobile Wallet Adapter works with Godot Engine.
 
 ## What is Mobile Wallet Adapter?
 
-Mobile Wallet Adapter (MWA) is a protocol that lets Android apps communicate
-with locally installed Solana wallet apps (Phantom, Backpack, Solflare).
-When your game calls `MWA.authorize()`, Android opens the wallet app,
-the user approves, and the wallet sends back an auth token your game can
-use for signing transactions.
+Mobile Wallet Adapter (MWA) 2.0.3 is a protocol that lets Android apps communicate with locally installed Solana wallet apps. When your game calls `authorize()`, Android opens the wallet app, the user approves, and the wallet returns an auth token your game uses for signing.
 
 No private keys ever leave the wallet app. Your game never sees them.
 
-## How it Works
-`
-Your Godot Game
-      │
-      │ MWA.authorize()
-      ▼
-Invoke SDK (GDScript)
-      │
-      │ Kotlin plugin bridge
-      ▼
-Android MWA SDK
-      │
-      │ Android Intent
-      ▼
-Phantom / Backpack / Solflare
-      │
-      │ Auth token + public key
-      ▼
-Your game receives: authorized signal
-`
+## How It Works
 
-## Authorization vs Reauthorization
+```
+Your Godot Game (GDScript)
+        │
+        │  _mwa.authorize(...)
+        ▼
+  MWAPlugin.kt  (@UsedByGodot bridge)
+        │
+        │  Kotlin coroutine
+        ▼
+  MWABridge.kt  (MWA 2.0.3 SDK)
+        │
+        │  Android Intent
+        ▼
+  Solflare / Jupiter / Phantom
+        │
+        │  auth_token + public_key
+        ▼
+  emitSignal("authorized", auth_token, address)
+        │
+        ▼
+  _on_authorized() in your GDScript
+```
 
-**First connect (authorize):**
-- Opens the wallet app
-- User sees your app name and approves
-- Wallet returns an auth token
-- Invoke saves the token to cache
+## Signals — The Only Way to Get Results
 
-**Subsequent connects (reauthorize):**
-- No wallet popup
-- Invoke sends the cached token silently
-- Wallet validates and refreshes the token
-- User experience: instant, invisible reconnect
+Every wallet operation is async. You call a method, and the result arrives via signal. Never expect a return value from any MWA method.
 
-This is why the auth cache matters — without it, users see the
-wallet approval popup every single time the app launches.
-
-## The Auth Token
-
-The auth token is a string the wallet gives you after authorization.
-It proves your app has been approved. You use it to:
-
-- Skip the approval popup on relaunch (reauthorize)
-- Sign transactions
-- Sign messages
-
-Tokens can expire. Invoke handles this automatically:
-
-| Token age | Action |
-|-----------|--------|
-| Under 30 minutes | Reuse directly — no wallet call |
-| 30 min to 24 hours | Silent reauthorize — no popup |
-| Over 24 hours | Full authorize — wallet popup |
-| Invalid exception | Clear cache, full authorize |
-
-## Signals vs Callbacks
-
-Invoke uses Godot's signal system for all wallet responses.
-Every operation is async — you call a method, connect to a signal,
-and the result arrives in your signal handler.
-`gdscript
+```gdscript
 # Call the method
-MWA.authorize(identity, "devnet")
+_mwa.authorize("solana:devnet", "My Game", "https://mygame.dev", "https://mygame.dev/icon.png")
 
-# Handle the result via signal
-func _on_authorized(auth_token: String, account: MWAAccount) -> void:
-    print("Connected: ", account.get_display_address())
-`
+# Result arrives here
+func _on_authorized(auth_token: String, address: String) -> void:
+    print("Connected: ", address)
+```
 
-Never try to get a return value directly from MWA methods —
-they are all fire-and-forget. Results always come via signals.
+## Auth Token
 
-## Supported Wallets
+The auth token is a string the wallet gives you after authorization. It proves your app has permission to request signatures. Invoke SDK stores it in encrypted cache — your GDScript never needs to read or store it directly.
 
-| Wallet | Package | Minimum Version |
-|--------|---------|-----------------|
-| Phantom | app.phantom | 23.0+ |
-| Backpack | com.backpack.wallet | Any current |
-| Solflare | com.solflare.mobile | 4.0+ |
+## Token Lifecycle
+
+| Token age | What happens |
+|-----------|-------------|
+| Under 30 min | Silent reconnect — no wallet interaction |
+| 30 min to 24 hrs | `reauthorize()` — wallet picker may appear once |
+| Over 24 hrs | Session expired — full `authorize()` required |
 
 ## Android Only
 
-The Kotlin plugin only runs on Android. On desktop (Windows, macOS, Linux),
-the plugin is not available and all wallet calls are gracefully ignored
-with a warning. This lets you develop your game on desktop and only
-test wallet features on a real Android device.
+The plugin only runs on Android. Always guard calls with `Engine.has_singleton("InvokeMWA")`. In the editor and on desktop, the singleton is absent — your game should handle this gracefully.
+
+## Wallet Compatibility
+
+| Wallet | Status | Notes |
+|--------|--------|-------|
+| Solflare | ✅ Full support | Best for testing |
+| Jupiter | ✅ Full support | |
+| Phantom | ❌ Domain not verified | Register at developer.phantom.app |
+| Backpack | ❌ MWA 2.0 incompatible | |

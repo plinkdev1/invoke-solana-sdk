@@ -26,6 +26,8 @@ Godot 4 has no native Solana integration. If you want your Android game or app t
 
 > **One `.aar` file. One signal interface. Full MWA 2.0.3 coverage.**
 
+📚 **[Full Documentation](https://invoke-sdk.netlify.app)** — Getting Started, API Reference, Auth Cache, Wallet Compatibility
+
 ---
 
 ## Demo

@@ -1,122 +1,52 @@
-﻿---
+---
 sidebar_position: 6
-title: Migration Guide
-description: Upgrading from the old Godot MWA SDK to Invoke.
+title: Wallet Compatibility
+description: Tested wallet compatibility for Invoke SDK on Android.
 ---
 
-# Migration Guide
+# Wallet Compatibility
 
-## Old SDK → Invoke
+Tested on Samsung Galaxy Android 14, March 2026.
 
-This guide covers migrating from the previous Godot MWA SDK to Invoke.
+## Compatibility Table
 
-## What Changed
+| Wallet | Package | authorize | signTx | signAndSend | signMessage | Notes |
+|--------|---------|-----------|--------|-------------|-------------|-------|
+| **Solflare** | com.solflare.mobile | ✅ | ✅ | ✅ | ✅ | Best for testing |
+| **Jupiter** | ag.jup.jupiter.android | ✅ | ✅ | ✅ | ✅ | |
+| **Phantom** | app.phantom | ❌ | — | — | — | Domain not verified |
+| **Backpack** | com.backpack.wallet | ❌ | — | — | — | MWA 2.0 incompatible |
 
-| Feature | Old SDK | Invoke |
-|---------|---------|--------|
-| authorize() | Partial — missing params | Full MWA 2.0 spec |
-| reauthorize() | Missing | Added |
-| deauthorize() | Missing | Added |
-| signMessages() | Missing | Added |
-| getCapabilities() | Missing | Added |
-| Auth token cache | Missing | Built-in (3 backends) |
-| Session state machine | None | Full state machine |
-| Error codes | Generic | Typed MWAError codes |
-| Wallet detection | None | getInstalledWallets() |
-| Desktop fallback | Crashes | Graceful stub mode |
+## Solflare
 
-## Step 1 — Replace the addon folder
+Full MWA 2.0.3 support. Recommended for development and testing. All operations work correctly across Devnet, Testnet, and Mainnet.
 
-Remove the old addon folder and replace with Invoke:
-```
-# Remove old
-rm -rf addons/mobile_wallet_adapter/
+## Jupiter
 
-# Add Invoke
-# Copy addons/mobile_wallet_adapter/ from the Invoke release zip
-```
+Full MWA 2.0.3 support. All operations work correctly.
 
-## Step 2 — Update authorize() calls
+## Phantom
 
-Old SDK:
+Phantom rejects authorization requests from unverified dApp domains. To use Phantom, register your dApp domain at [developer.phantom.app](https://developer.phantom.app). Until then, Phantom will return `USER_DECLINED` on every authorize attempt.
+
+## Backpack
+
+Backpack does not implement MWA 2.0 and is not compatible with Invoke SDK. Connection attempts will fail with `WALLET_NOT_INSTALLED` or `UNKNOWN`.
+
+## Detecting Installed Wallets
+
 ```gdscript
-# Old — incomplete params
-mwa_plugin.authorize("devnet", "My Game", "https://mygame.dev", "icon.png")
+_mwa.wallet_apps_detected.connect(_on_wallets_detected)
+_mwa.getInstalledWallets()
+
+func _on_wallets_detected(json: String) -> void:
+    var wallets = JSON.parse_string(json)
+    for wallet in wallets:
+        print("Found: ", wallet)
 ```
 
-Invoke:
-```gdscript
-# New — use MWAIdentity object
-var identity = MWAIdentity.new("My Game", "https://mygame.dev", "favicon.ico")
-MWA.authorize(identity, "devnet")
-```
+## Known Limitations
 
-## Step 3 — Update signal connections
-
-Old SDK signals (if any) were inconsistent. Invoke uses:
-```gdscript
-# Connect all signals in _ready()
-MWA.authorized.connect(_on_authorized)
-MWA.reauthorized.connect(_on_reauthorized)
-MWA.deauthorized.connect(_on_deauthorized)
-MWA.disconnected.connect(_on_disconnected)
-MWA.transaction_signed.connect(_on_transaction_signed)
-MWA.transaction_sent.connect(_on_transaction_sent)
-MWA.message_signed.connect(_on_message_signed)
-MWA.capabilities_received.connect(_on_capabilities_received)
-MWA.error.connect(_on_error)
-```
-
-## Step 4 — Add auth cache (new feature)
-
-The old SDK had no caching — users saw wallet popups on every launch.
-Invoke adds this automatically. No code changes needed for the default.
-
-For manual control:
-```gdscript
-# On app start — try silent reconnect first
-var key = MWAAuthCache.make_key("app.phantom")
-if cache_manager.has_reauthorizable_token(key):
-    var token = cache_manager.load_auth_token(key)
-    MWA.reauthorize(token.token, identity)
-else:
-    MWA.authorize(identity, "devnet")
-```
-
-## Step 5 — Update error handling
-
-Old SDK used generic errors. Invoke uses typed codes:
-```gdscript
-# Old
-func _on_error(message: String) -> void:
-    print("Error: ", message)
-
-# New
-func _on_error(code: int, message: String) -> void:
-    match code:
-        MWAError.Code.USER_DECLINED:
-            show_declined_message()
-        MWAError.Code.WALLET_NOT_INSTALLED:
-            show_install_prompt()
-        MWAError.Code.AUTH_TOKEN_INVALID:
-            cache_manager.clear_all()
-            MWA.authorize(identity, "devnet")
-        _:
-            print("Error %d: %s" % [code, message])
-```
-
-## Step 6 — Add disconnect/logout (new)
-```gdscript
-# Soft disconnect — token kept in cache
-MWA.disconnect()
-
-# Full logout — token cleared
-MWA.full_logout()
-```
-
-## Breaking Changes Summary
-
-1. ``authorize()`` now takes ``MWAIdentity`` object instead of raw strings
-2. Error signal now has two params: ``(code: int, message: String)``
-3. Plugin singleton name is now ``InvokeMWA`` (was ``GodotMWA``)
-4. All GDScript class names are now typed (MWAAccount, MWAAuthToken, etc.)
+- MWA always opens the system wallet picker on every sign operation — by design
+- Silent reconnect only works within the 30-minute cache window
+- Solscan transaction links only work on Testnet and Mainnet (devnet not supported by Solscan)

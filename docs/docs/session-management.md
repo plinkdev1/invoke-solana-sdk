@@ -1,4 +1,4 @@
-﻿---
+---
 sidebar_position: 5
 title: Session Management
 description: Connect, disconnect, and reconnect patterns for Invoke SDK.
@@ -6,91 +6,81 @@ description: Connect, disconnect, and reconnect patterns for Invoke SDK.
 
 # Session Management
 
-## Session States
-
-The SDK is always in one of these states:
-```gdscript
-enum State {
-    IDLE,          # No session, no token
-    CONNECTING,    # Waiting for wallet response
-    AUTHORIZED,    # Connected, token valid
-    REAUTHORIZING, # Silent reauth in progress
-    ERROR          # Last operation failed
-}
-```
-
-Listen for state changes:
-```gdscript
-MWA.state_changed.connect(func(state):
-    match state:
-        MWA.State.AUTHORIZED:    show_dashboard()
-        MWA.State.CONNECTING:    show_loading()
-        MWA.State.ERROR:         show_error()
-)
-```
-
 ## Connect Flow
 
 ### First-Time User
 
-App launches → No token in cache → MWA.authorize() → Wallet opens → User approves → authorized signal → Token saved to cache
-
-### Returning User
-
-App launches → Token found in cache:
-- Fresh (under 30 min) → Reuse directly, no wallet call
-- Stale (30min-24h) → MWA.reauthorize() silent background call
-- Expired (over 24h) → MWA.authorize() wallet popup
-
-## Disconnect vs Deauthorize
-
-### MWA.disconnect()
-Local only — no wallet call. Token stays in cache. Use when user navigates away.
-```gdscript
-MWA.disconnect()
+```
+App opens
+  → No token in cache
+  → Show Connect Wallet button
+  → User taps Connect
+  → _mwa.authorize(...)
+  → System wallet picker opens
+  → User selects wallet and approves
+  → authorized signal fires
+  → Token saved to encrypted cache
+  → Navigate to dashboard
 ```
 
-### MWA.deauthorize(auth_token)
-Calls wallet to invalidate token server-side. Use when user explicitly logs out.
-```gdscript
-MWA.deauthorize(current_token)
+### Returning User (within 30 min)
+
+```
+App opens
+  → Token found in cache, age < 30 min
+  → _mwa.tryReauthorizeFromCache(...)
+  → Silent reconnect — no wallet interaction
+  → reauthorized signal fires
+  → Navigate to dashboard
 ```
 
-### MWA.full_logout()
-Deauthorizes + clears cache + resets state. Use for the Disconnect Wallet button.
-```gdscript
-MWA.full_logout()
+### Returning User (30 min to 24 hrs)
+
+```
+App opens
+  → Token found in cache, age < 24 hrs
+  → _mwa.tryReauthorizeFromCache(...)
+  → reauthorize() called internally
+  → Wallet picker may appear once
+  → reauthorized signal fires
+  → Navigate to dashboard
 ```
 
-## Handling Wallet Not Installed
+## Disconnect
+
+Invoke SDK uses **instant disconnect** — no wallet popup required.
+
 ```gdscript
-MWA.error.connect(func(code, message):
-    if code == MWAError.Code.WALLET_NOT_INSTALLED:
-        OS.shell_open("https://play.google.com/store/apps/details?id=app.phantom")
-)
+func disconnect() -> void:
+    _mwa.disconnectWallet()
+    # deauthorized signal fires immediately
+    # Navigate back to wallet picker
 ```
 
-## Handling Timeout
+This clears the encrypted cache and emits `deauthorized`. The wallet app is never opened.
 
-All wallet operations have a 60-second timeout. On timeout you get NETWORK_TIMEOUT (3001). Reset your UI and let the user try again.
+## Handling Errors
 
-## Handling Token Invalidation
 ```gdscript
-MWA.error.connect(func(code, message):
-    if code == MWAError.Code.AUTH_TOKEN_INVALID:
-        cache_manager.clear_all()
-        MWA.authorize(identity, "devnet")
-)
+func _on_mwa_error(code: int, message: String) -> void:
+    match code:
+        1001:  # USER_DECLINED
+            show_message("Connection cancelled.")
+        1002:  # WALLET_NOT_INSTALLED
+            OS.shell_open("https://play.google.com/store/apps/details?id=com.solflare.mobile")
+        1004:  # AUTH_TOKEN_INVALID
+            _mwa.cacheClear()
+            _mwa.authorize("solana:devnet", "My Game", "https://mygame.dev", "https://mygame.dev/icon.png")
+        1005:  # AUTH_TOKEN_EXPIRED
+            show_connect_button()
+        _:
+            show_message("Error %d: %s" % [code, message])
 ```
 
-## One Session at a Time
+## One Operation at a Time
 
-Invoke blocks concurrent wallet sessions. Always wait for a signal before calling another wallet method. Concurrent calls return SESSION_ALREADY_ACTIVE (1003).
+The wallet picker can only be open once. Do not call another wallet method while a previous operation is pending. Wait for either a success signal or `mwa_error` before proceeding.
 
-## App Lifecycle
-```gdscript
-func _notification(what: int) -> void:
-    if what == NOTIFICATION_APPLICATION_FOCUS_IN:
-        if not MWA.is_connected():
-            try_reconnect()
-```
+## Wallet Picker Behavior
+
+MWA always opens the system wallet picker on every sign operation — this is a protocol requirement, not a limitation of Invoke SDK. The only exception is `tryReauthorizeFromCache()` within the 30-minute window, which is completely silent.

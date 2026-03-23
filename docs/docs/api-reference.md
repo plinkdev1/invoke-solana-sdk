@@ -1,243 +1,204 @@
-﻿---
+---
 sidebar_position: 3
 title: API Reference
-description: Complete reference for every MobileWalletAdapter method and signal.
+description: Complete reference for every Invoke SDK method and signal.
 ---
 
 # API Reference
 
-## MobileWalletAdapter
+## Getting the Singleton
 
-The main SDK class. Add as AutoLoad named `MWA` in Project Settings.
+```gdscript
+var _mwa = null
+
+func _ready() -> void:
+    if Engine.has_singleton("InvokeMWA"):
+        _mwa = Engine.get_singleton("InvokeMWA")
+```
 
 ---
 
 ## Signals
 
-### `authorized(auth_token: String, account: MWAAccount)`
-Emitted when `authorize()` succeeds.
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| auth_token | String | Raw auth token from wallet |
-| account | MWAAccount | Authorized wallet account |
+### `authorized(auth_token: String, address: String)`
+Emitted when `authorize()` succeeds. `address` is the wallet public key in base58.
 
 ### `reauthorized(auth_token: String)`
-Emitted when `reauthorize()` succeeds silently.
+Emitted when `reauthorize()` or `tryReauthorizeFromCache()` succeeds silently.
 
 ### `deauthorized()`
-Emitted when `deauthorize()` completes.
-
-### `disconnected()`
-Emitted when `disconnect()` or `full_logout()` is called.
+Emitted when `deauthorize()` or `disconnectWallet()` completes.
 
 ### `transaction_signed(signatures: Array)`
-Emitted when `sign_transactions()` succeeds.
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| signatures | Array[PackedByteArray] | Signed transaction bytes |
+Emitted when `signTransactions()` or `signMemoTransaction()` succeeds.
 
 ### `transaction_sent(signatures: Array)`
-Emitted when `sign_and_send_transactions()` succeeds.
+Emitted when `signAndSendTransactions()` or `signAndSendMemoTransaction()` succeeds. Contains transaction signatures (base58).
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| signatures | Array[String] | Transaction signatures (base58) |
+### `message_signed(signatures: Array)`
+Emitted when `signMessages()` or `signMemoMessage()` succeeds.
 
-### `message_signed(signed_messages: Array)`
-Emitted when `sign_messages()` succeeds.
+### `capabilities_received(json: String)`
+Emitted when `getCapabilities()` succeeds. Contains wallet capabilities as JSON string.
 
-### `capabilities_received(capabilities: MWACapabilities)`
-Emitted when `get_capabilities()` succeeds.
+### `wallet_apps_detected(json: String)`
+Emitted when `getInstalledWallets()` completes. Contains installed wallet list as JSON.
 
-### `wallets_detected(wallets: Array)`
-Emitted when `get_installed_wallets()` completes.
-
-### `error(code: int, message: String)`
-Emitted when any operation fails.
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| code | int | Error code (see MWAError) |
-| message | String | Human-readable error message |
-
-### `state_changed(new_state: MobileWalletAdapter.State)`
-Emitted whenever the SDK state changes.
+### `mwa_error(code: int, message: String)`
+Emitted when any operation fails. See [Error Codes](#error-codes).
 
 ---
 
 ## Methods
 
-### `authorize(identity: MWAIdentity, cluster: String = "devnet") -> void`
-Opens the wallet app and requests authorization.
-`gdscript
-var identity = MWAIdentity.new("My Game", "https://mygame.dev", "favicon.ico")
-MWA.authorize(identity, "devnet")
-`
+### Authorization
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| identity | MWAIdentity | required | App identity shown in wallet |
-| cluster | String | "devnet" | "devnet", "testnet", "mainnet-beta" |
+#### `authorize(cluster, name, uri, icon)`
+Opens the system wallet picker and requests authorization.
 
----
-
-### `reauthorize(auth_token: String, identity: MWAIdentity) -> void`
-Silently refreshes an existing auth token. No wallet popup.
-`gdscript
-MWA.reauthorize(cached_token, identity)
-`
-
----
-
-### `deauthorize(auth_token: String) -> void`
-Tells the wallet to invalidate this token server-side.
-`gdscript
-MWA.deauthorize(current_token)
-`
-
----
-
-### `disconnect() -> void`
-Closes the local session. Does NOT call the wallet. Token remains in cache.
-`gdscript
-MWA.disconnect()
-`
-
----
-
-### `full_logout() -> void`
-Deauthorizes + clears cache + resets to IDLE state.
-`gdscript
-MWA.full_logout()
-`
-
----
-
-### `sign_transactions(transactions: Array) -> void`
-Signs one or more transactions. Does NOT send them to the network.
-`gdscript
-MWA.sign_transactions([tx_bytes])
-`
+```gdscript
+_mwa.authorize("solana:devnet", "My Game", "https://mygame.dev", "https://mygame.dev/icon.png")
+```
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| transactions | Array[PackedByteArray] | Serialized transaction bytes |
+| cluster | String | `"solana:devnet"`, `"solana:testnet"`, `"solana:mainnet-beta"` |
+| name | String | App name shown in wallet UI |
+| uri | String | App URL (must start with https://) |
+| icon | String | Full URL to app icon |
 
 ---
 
-### `sign_and_send_transactions(transactions: Array, options: MWASendOptions = null) -> void`
+#### `reauthorize(auth_token, name, uri, icon)`
+Refreshes an existing session. May show wallet picker if token is stale.
+
+---
+
+#### `deauthorize(auth_token)`
+Tells the wallet to invalidate this token server-side.
+
+---
+
+#### `tryReauthorizeFromCache(name, uri, icon)`
+Reads auth token from encrypted cache and reauthorizes automatically. This is the recommended pattern for app startup.
+
+```gdscript
+func _ready() -> void:
+    if _mwa.cacheHasToken():
+        _mwa.tryReauthorizeFromCache("My Game", "https://mygame.dev", "https://mygame.dev/icon.png")
+    else:
+        show_connect_button()
+```
+
+---
+
+#### `disconnectWallet()`
+Clears the cached token instantly. Does NOT call the wallet — no popup. Use for your Disconnect button.
+
+```gdscript
+_mwa.disconnectWallet()
+# Then listen for deauthorized signal
+```
+
+---
+
+### Signing
+
+#### `signTransactions(transactions)`
+Signs one or more raw transactions (Base64 encoded). Does not broadcast.
+
+```gdscript
+_mwa.signTransactions(["BASE64_TX_BYTES"])
+```
+
+---
+
+#### `signAndSendTransactions(transactions, min_context_slot)`
 Signs and broadcasts transactions to the Solana network.
-`gdscript
-MWA.sign_and_send_transactions([tx_bytes])
-# With options:
-var opts = MWASendOptions.new(min_context_slot)
-MWA.sign_and_send_transactions([tx_bytes], opts)
-`
+
+```gdscript
+_mwa.signAndSendTransactions(["BASE64_TX_BYTES"], 0)
+```
 
 ---
 
-### `sign_messages(messages: Array, addresses: Array) -> void`
-Signs arbitrary byte messages (off-chain personal sign).
-`gdscript
-var msg = "Hello Solana".to_utf8_buffer()
-MWA.sign_messages([msg], [account.address_bytes])
-`
+#### `signMessages(messages, addresses)`
+Signs arbitrary messages off-chain (no transaction, no network).
+
+```gdscript
+_mwa.signMessages(["BASE64_MSG_BYTES"], ["BASE64_ADDRESS_BYTES"])
+```
 
 ---
 
-### `get_capabilities() -> void`
-Queries what features the wallet supports.
-Emits `capabilities_received` on success.
+### Convenience Methods
+
+These build real Solana transactions internally — no transaction construction needed in GDScript.
+
+#### `signMemoTransaction(memo, rpc_url)`
+Builds a real memo transaction, fetches a fresh blockhash from RPC, and requests a signature. Emits `transaction_signed`.
+
+```gdscript
+_mwa.signMemoTransaction("Hello Solana", "https://api.devnet.solana.com")
+```
 
 ---
 
-### `get_installed_wallets() -> void`
-Lists MWA-compatible wallet apps installed on the device.
-Emits `wallets_detected` on completion.
+#### `signAndSendMemoTransaction(memo, rpc_url)`
+Builds, signs, and broadcasts a memo transaction. Emits `transaction_sent` with the transaction signature.
+
+```gdscript
+_mwa.signAndSendMemoTransaction("Hello Solana", "https://api.devnet.solana.com")
+```
 
 ---
 
-### `is_connected() -> bool`
-Returns true if state is AUTHORIZED.
+#### `signMemoMessage(message)`
+Signs a plain text message off-chain. Emits `message_signed`.
 
-### `get_state() -> MobileWalletAdapter.State`
-Returns current state enum value.
-
-### `get_current_account() -> MWAAccount`
-Returns the authorized account, or null if not connected.
+```gdscript
+_mwa.signMemoMessage("Hello Solana")
+```
 
 ---
 
-## State Enum
-`gdscript
-enum State {
-    IDLE,          # No session
-    CONNECTING,    # Waiting for wallet response
-    AUTHORIZED,    # Connected, token valid
-    REAUTHORIZING, # Silent reauth in progress
-    ERROR          # Last operation failed
-}
-`
+### Discovery
+
+#### `getCapabilities()`
+Queries the connected wallet for supported MWA features. Emits `capabilities_received`.
+
+#### `getInstalledWallets()`
+Detects MWA-compatible wallet apps installed on the device. Emits `wallet_apps_detected`.
 
 ---
 
-## MWAIdentity
+### Cache Inspection
 
-App identity passed to `authorize()` and `reauthorize()`.
-`gdscript
-var identity = MWAIdentity.new(
-    "My Game",             # name — shown in wallet UI
-    "https://mygame.dev",  # uri  — must start with http(s)://
-    "favicon.ico"          # icon — relative to uri
-)
-`
-
----
-
-## MWAAccount
-
-Wallet account returned after authorization.
-
-| Field | Type | Description |
-|-------|------|-------------|
-| address_base58 | String | Public key as base58 string |
-| address_bytes | PackedByteArray | Raw 32-byte public key |
-| label | String | Optional wallet label |
-| chains | Array[String] | Supported chains |
-`gdscript
-# Display truncated address in UI (first 4...last 4)
-label.text = account.get_display_address()
-`
+```gdscript
+_mwa.cacheHasToken()       # bool — token exists in cache
+_mwa.cacheGetAddress()     # String — cached wallet address
+_mwa.cacheGetAgeSeconds()  # int — seconds since token was cached
+_mwa.cacheIsStale()        # bool — true if older than 30 minutes
+_mwa.cacheClear()          # clear active wallet token
+_mwa.cacheClearAll()       # clear all cached tokens
+```
 
 ---
 
-## MWAAuthToken
-
-| Method | Returns | Description |
-|--------|---------|-------------|
-| is_valid() | bool | Token string exists and created_at is set |
-| should_reuse() | bool | Age under 30 minutes |
-| should_reauthorize() | bool | Age under 24 hours |
-| is_expired() | bool | Age over 24 hours |
-| get_age_seconds() | int | Seconds since token was issued |
-| get_status() | String | "FRESH", "STALE", or "EXPIRED" |
-
----
-
-## MWAError Codes
+## Error Codes
 
 | Code | Constant | Retryable | Cause |
 |------|----------|-----------|-------|
-| 1001 | USER_DECLINED | No | User tapped Reject |
-| 1002 | WALLET_NOT_INSTALLED | No | No wallet app found |
-| 1003 | SESSION_ALREADY_ACTIVE | No | Concurrent call blocked |
+| 1001 | USER_DECLINED | No | User tapped Reject in wallet |
+| 1002 | WALLET_NOT_INSTALLED | No | No MWA wallet found on device |
+| 1003 | SESSION_ALREADY_ACTIVE | No | Concurrent session blocked |
 | 1004 | AUTH_TOKEN_INVALID | Yes | Token rejected by wallet |
-| 1005 | AUTH_TOKEN_EXPIRED | Yes | Token too old |
-| 2001 | TRANSACTION_EXPIRED | Yes | Blockhash not found |
-| 2002 | TRANSACTION_FAILED | No | On-chain failure |
-| 2003 | SIMULATION_FAILED | No | Preflight failed |
+| 1005 | AUTH_TOKEN_EXPIRED | Yes | Token too old, re-auth required |
+| 2001 | TRANSACTION_EXPIRED | Yes | Blockhash expired |
+| 2002 | TRANSACTION_FAILED | No | On-chain rejection |
+| 2003 | SIMULATION_FAILED | No | Preflight simulation failed |
 | 2004 | INSUFFICIENT_FUNDS | No | Not enough SOL |
-| 3001 | NETWORK_TIMEOUT | Yes | 60s timeout exceeded |
-| 3002 | RPC_ERROR | Yes | RPC server error |
+| 2005 | BLOCKHASH_NOT_FOUND | Yes | RPC blockhash fetch failed |
+| 3001 | NETWORK_TIMEOUT | Yes | Network request timed out |
+| 3002 | RPC_ERROR | Yes | RPC endpoint error |
+| 9999 | UNKNOWN | No | Unmapped exception |
