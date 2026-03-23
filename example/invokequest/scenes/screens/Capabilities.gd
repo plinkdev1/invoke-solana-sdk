@@ -61,7 +61,7 @@ func _bool_str(val: bool) -> String:
 	return "Supported" if val else "Not Supported"
 
 func _color_bool(label: Label, val: bool) -> void:
-	label.modulate = DesignTokens.COLOR_GREEN if val else DesignTokens.COLOR_RED
+	label.modulate = DesignTokens.COLOR_GREEN if val else DesignTokens.COLOR_YELLOW
 
 func _on_back_btn_pressed() -> void:
 	SceneManager.pop_scene()

@@ -17,16 +17,16 @@ var _mwa = null
 func _ready() -> void:
 	if Engine.has_singleton("InvokeMWA"):
 		_mwa = Engine.get_singleton("InvokeMWA")
-		for n in NETWORKS:
-			network_opts.add_item(n)
-			for b in BACKENDS:
-				backend_opts.add_item(b)
-				_config.load(CONFIG_PATH)
-				network_opts.selected = _config.get_value("settings", "network", 0)
-				backend_opts.selected = _config.get_value("settings", "backend", 1)
-				rpc_input.text        = _config.get_value("settings", "rpc_override", "")
-				sdk_ver_label.text = "1.0.0"
-				app_ver_label.text = "1.0.0"
+	for n in NETWORKS:
+		network_opts.add_item(n)
+	for b in BACKENDS:
+		backend_opts.add_item(b)
+	_config.load(CONFIG_PATH)
+	network_opts.selected = _config.get_value("settings", "network", 0)
+	backend_opts.selected = _config.get_value("settings", "backend", 1)
+	rpc_input.text        = _config.get_value("settings", "rpc_override", "")
+	sdk_ver_label.text = "1.0.0"
+	app_ver_label.text = "1.0.0"
 
 func _save_settings() -> void:
 	_config.set_value("settings", "network",      network_opts.selected)

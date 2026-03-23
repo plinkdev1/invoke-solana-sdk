@@ -22,7 +22,7 @@ func _ready() -> void:
 
 func _refresh_status() -> void:
 	var has_token := false
-	var address   := "â€”"
+	var address   := ""
 	var age_sec   := 0
 	var is_stale  := false
 	if _mwa:
@@ -30,37 +30,40 @@ func _refresh_status() -> void:
 		address   = _mwa.cacheGetAddress()
 		age_sec   = int(_mwa.cacheGetAgeSeconds())
 		is_stale  = _mwa.cacheIsStale()
-		if has_token:
-			status_dot.color  = DesignTokens.COLOR_GREEN
-			status_label.text = "Token cached"
-			status_label.modulate = DesignTokens.COLOR_GREEN
+	if has_token:
+		status_dot.color      = DesignTokens.COLOR_GREEN
+		status_label.text     = "Token cached"
+		status_label.modulate = DesignTokens.COLOR_GREEN
+		var display_addr := address
+		if address.length() > 12:
+			display_addr = address.substr(0, 4) + "..." + address.substr(address.length() - 4)
+		address_label.text = display_addr if display_addr != "" else "-"
+		if age_sec > 0:
+			age_label.text = "%d min %d sec" % [age_sec / 60, age_sec % 60]
 		else:
-				status_dot.color  = DesignTokens.COLOR_RED
-				status_label.text = "No cached token"
-				status_label.modulate = DesignTokens.COLOR_RED
-				var display_addr := address
-				if address.length() > 12:
-					display_addr = address.substr(0, 4) + "..." + address.substr(address.length() - 4)
-					address_label.text = display_addr
-					if age_sec > 0:
-						age_label.text = "%d min %d sec" % [age_sec / 60, age_sec % 60]
-					else:
-							age_label.text = "â€”"
-							stale_label.text = "Yes" if is_stale else "No"
-							stale_label.modulate = DesignTokens.COLOR_YELLOW if is_stale else DesignTokens.COLOR_GREEN
-							_add_log("Status refreshed -- token: %s" % str(has_token))
+			age_label.text = "-"
+		stale_label.text     = "Yes" if is_stale else "No"
+		stale_label.modulate = DesignTokens.COLOR_YELLOW if is_stale else DesignTokens.COLOR_GREEN
+	else:
+		status_dot.color      = DesignTokens.COLOR_RED
+		status_label.text     = "No cached token"
+		status_label.modulate = DesignTokens.COLOR_RED
+		address_label.text = "-"
+		age_label.text     = "-"
+		stale_label.text   = "-"
+	_add_log("Status refreshed -- token: %s" % str(has_token))
 
 func _on_clear_btn_pressed() -> void:
 	if _mwa:
 		_mwa.cacheClearAll()
 		_add_log("Cache cleared")
 	else:
-			_add_log("[sim] Cache cleared")
-			_refresh_status()
-			var tween := create_tween()
-			for i in 4:
-				tween.tween_property(info_card, "position:x", randf_range(-6, 6), 0.05)
-				tween.tween_property(info_card, "position:x", 0.0, 0.05)
+		_add_log("[sim] Cache cleared")
+	_refresh_status()
+	var tween := create_tween()
+	for i in 4:
+		tween.tween_property(info_card, "position:x", randf_range(-6, 6), 0.05)
+		tween.tween_property(info_card, "position:x", 0.0, 0.05)
 
 func _on_reconnect_btn_pressed() -> void:
 	_add_log("Attempting reauthorize...")

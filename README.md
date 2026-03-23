@@ -295,6 +295,7 @@ invoke-solana-sdk/
 
 ## Known Limitations
 
+- **Clone Authorization** — `supports_clone_authorization` is in the MWA 2.0.3 spec and the SDK queries it correctly via `getCapabilities()`. Solflare and Jupiter return `false` — wallet adoption is incomplete. This is expected and will work automatically once wallets ship support. Use cases when available: multi-device gaming, game + companion app sharing one session, multiple SDKs sharing one authorization.
 - **Backpack** — MWA 2.0 incompatible, not supported
 - **Phantom** — Rejects unverified dApp domains (register at [developer.phantom.app](https://developer.phantom.app))
 - **Silent reconnect** — Only within 30-minute window; stale sessions trigger wallet picker
